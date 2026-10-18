@@ -3,281 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Telegram Clicker App</title>
+    <title>Clicker</title>
     <style>
-        body {
-            background: #121212;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ЭКРАНЫ */
-        .screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            padding-bottom: 70px;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* МЕНЮ НАВИГАЦИИ */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 70px;
-            background: #191919;
-            border-top: 2px solid #333;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #888;
-            font-size: 12px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 5px 0;
-            width: 50%;
-        }
-
-        .nav-item.active {
-            color: #f5b041;
-            font-weight: bold;
-        }
-
-        .nav-icon {
-            font-size: 24px;
-            margin-bottom: 2px;
-        }
-
-        /* КЛИКЕР */
-        #coins-text {
-            font-size: 38px;
-            font-weight: bold;
-            margin-bottom: 40px;
-        }
-
-        .coin {
-            width: 220px;
-            height: 220px;
-            background: #f5b041;
-            border-radius: 50%;
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 10px 0 #935116;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .coin:active {
-            transform: translateY(5px);
-            box-shadow: 0 5px 0 #935116;
-        }
-
-        .coin-icon {
-            font-size: 80px;
-        }
-
-        /* АНИМАЦИЯ ЦИФР */
-        .click-animation {
-            position: absolute;
-            color: #ffffff;
-            font-size: 32px;
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 10;
-            animation: floatUp 0.4s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
-            100% { opacity: 0; transform: translate(-50%, -50%) translateY(-80px); }
-        }
-
-        /* РУЛЕТКА */
-        .wheel-box {
-            position: relative;
-            margin: 20px 0;
-        }
-
-        .pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid #ff3333;
-            z-index: 10;
-        }
-
-        .wheel {
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            border: 6px solid #333;
-            background: conic-gradient(#e74c3c 0deg 90deg, #3498db 90deg 180deg, #2ecc71 180deg 270deg, #f1c40f 270deg 360deg);
-            transition: transform 4s ease-out;
-        }
-
-        .btn-spin {
-            background: #2ecc71;
-            color: #fff;
-            border: none;
-            padding: 12px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        .btn-spin:disabled {
-            background: #555;
-        }
+        body { background: #121212; color: #fff; font-family: Arial; margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding-bottom: 70px; }
+        .screen.active { display: flex; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #191919; border-top: 2px solid #333; display: flex; }
+        .nav-item { flex: 1; background: none; border: none; color: #888; font-size: 16px; cursor: pointer; }
+        .nav-item.active { color: #f5b041; font-weight: bold; }
+        #coins-text { font-size: 40px; margin-bottom: 30px; }
+        .coin { width: 200px; height: 200px; background: #f5b041; border-radius: 50%; box-shadow: 0 10px 0 #935116; display: flex; align-items: center; justify-content: center; font-size: 70px; cursor: pointer; margin: 0 auto; }
+        .coin:active { transform: translateY(5px); box-shadow: 0 5px 0 #935116; }
+        .wheel-box { position: relative; margin: 20px auto; width: 250px; }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ff3333; z-index: 10; }
+        .wheel { width: 250px; height: 250px; border-radius: 50%; border: 6px solid #333; background: conic-gradient(#e74c3c 0deg 90deg, #3498db 90deg 180deg, #2ecc71 180deg 270deg, #f1c40f 270deg 360deg); transition: transform 4s ease-out; }
+        .btn-spin { background: #2ecc71; color: #fff; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 20px; cursor: pointer; margin-top: 20px; }
+        .btn-spin:disabled { background: #555; }
     </style>
 </head>
 <body>
 
-    <!-- ЭКРАН КЛИКЕРА -->
     <div id="screen-clicker" class="screen active">
         <div id="coins-text">Монеты: 0</div>
-        <div class="coin" id="coin-btn">
-            <span class="coin-icon" id="coin-img">⭐</span>
-        </div>
+        <div class="coin" id="coin-btn">⭐</div>
     </div>
 
-    <!-- ЭКРАН РУЛЕТКИ -->
     <div id="screen-roulette" class="screen">
         <h2>Колесо Удачи</h2>
-        <p style="color: #aaa; font-size: 14px; text-align: center;">🔴 +500 | 🔵 Буст | 🟢 +2500 | 🟡 👑 Скин</p>
-        
         <div class="wheel-box">
             <div class="pointer"></div>
             <div class="wheel" id="wheel-element"></div>
         </div>
-
         <button class="btn-spin" id="spin-free" onclick="startSpin()">Бесплатно</button>
         <div id="timer-box" style="margin-top: 10px; font-size: 14px; color: #888;"></div>
     </div>
 
-    <!-- МЕНЮ -->
     <div class="nav-bar">
-        <button id="tab-clicker" class="nav-item active" onclick="showScreen('clicker')">
-            <span class="nav-icon">🎯</span>
-            <span>Кликер</span>
-        </button>
-        <button id="tab-roulette" class="nav-item" onclick="showScreen('roulette')">
-            <span class="nav-icon">🎡</span>
-            <span>Рулетка</span>
-        </button>
+        <button id="tab-clicker" class="nav-item active" onclick="goTab('clicker')">🎯 Кликер</button>
+        <button id="tab-roulette" class="nav-item" onclick="goTab('roulette')">🎡 Рулетка</button>
     </div>
 
     <script>
-        // ЗАГРУЗКА ИЗ ХРАНИЛИЩА
-        let savedCoins = localStorage.getItem('coins');
-        let coins = 0;
-        if (savedCoins && !isNaN(parseInt(savedCoins))) {
-            coins = parseInt(savedCoins);
-        }
-
-        let currentSkin = localStorage.getItem('activeSkin');
-        let activeSkin = currentSkin ? currentSkin : '⭐';
-        
+        let coins = parseInt(localStorage.getItem('coins')) || 0;
+        let activeSkin = localStorage.getItem('activeSkin') || '⭐';
         let clickMultiplier = 1;
         let spinning = false;
 
         const scoreView = document.getElementById('coins-text');
-        const skinView = document.getElementById('coin-img');
-        
+        const coinBtn = document.getElementById('coin-btn');
+        const wheelEl = document.getElementById('wheel-element');
+
         scoreView.innerText = 'Монеты: ' + coins;
-        skinView.innerText = activeSkin;
+        coinBtn.innerText = activeSkin;
 
-        // ПЕРЕКЛЮЧЕНИЕ ТАБОВ
-        function showScreen(tabName) {
+        function goTab(name) {
             if (spinning) return;
-
-            document.getElementById('screen-clicker').style.display = 'none';
-            document.getElementById('screen-roulette').style.display = 'none';
+            document.getElementById('screen-clicker').classList.remove('active');
+            document.getElementById('screen-roulette').classList.remove('active');
             document.getElementById('tab-clicker').classList.remove('active');
             document.getElementById('tab-roulette').classList.remove('active');
 
-            if (tabName === 'clicker') {
-                document.getElementById('screen-clicker').style.display = 'flex';
+            if (name === 'clicker') {
+                document.getElementById('screen-clicker').classList.add('active');
                 document.getElementById('tab-clicker').classList.add('active');
                 scoreView.innerText = 'Монеты: ' + coins;
             } else {
-                document.getElementById('screen-roulette').style.display = 'flex';
+                document.getElementById('screen-roulette').classList.add('active');
                 document.getElementById('tab-roulette').classList.add('active');
                 checkTimer();
             }
         }
 
-        // КЛИК НА МОНЕТУ
-        const coinBtn = document.getElementById('coin-btn');
-        
         function handleTap(e) {
-            coins = coins + (1 * clickMultiplier);
+            coins += (1 * clickMultiplier);
             scoreView.innerText = 'Монеты: ' + coins;
             localStorage.setItem('coins', coins);
-
-            let clickX = e.clientX;
-            let clickY = e.clientY;
-            if (e.touches && e.touches[0]) {
-                clickX = e.touches[0].clientX;
-                clickY = e.touches[0].clientY;
-            }
-
-            const rect = coinBtn.getBoundingClientRect();
-            const posX = clickX - rect.left;
-            const posY = clickY - rect.top;
-
-            const animationText = document.createElement('div');
-            animationText.className = 'click-animation';
-            animationText.innerText = '+' + (1 * clickMultiplier);
-            animationText.style.left = posX + 'px';
-            animationText.style.top = posY + 'px';
-
-            coinBtn.appendChild(animationText);
-            setTimeout(function() { animationText.remove(); }, 500);
         }
 
         coinBtn.addEventListener('mousedown', handleTap);
-        coinBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            handleTap(e);
-        }, { passive: false });
+        coinBtn.addEventListener('touchstart', function(e) { e.preventDefault(); handleTap(e); }, { passive: false });
 
-        // ВРАЩЕНИЕ РУЛЕТКИ
-        const wheelEl = document.getElementById('wheel-element');
-        
         function startSpin() {
             if (spinning) return;
             spinning = true;
-
             document.getElementById('spin-free').disabled = true;
             
             let degrees = Math.floor(Math.random() * 360) + 1800;
@@ -287,21 +95,10 @@
                 spinning = false;
                 let sector = (360 - (degrees % 360)) % 360;
 
-                if (sector >= 0 && sector < 90) {
-                    coins += 500;
-                    alert("Вы выиграли 500 монет!");
-                } else if (sector >= 90 && sector < 180) {
-                    activeSkin = '👑';
-                    localStorage.setItem('activeSkin', '👑');
-                    skinView.innerText = '👑';
-                    alert("Ура! Выпал скин Короны 👑!");
-                } else if (sector >= 180 && sector < 270) {
-                    coins += 2500;
-                    alert("Вы выиграли супер приз: 2500 монет!");
-                } else {
-                    clickMultiplier = 2;
-                    alert("Буст x2 начисление активирован!");
-                }
+                if (sector >= 0 && sector < 90) { coins += 500; alert("Вы выиграли 500 монет!"); }
+                else if (sector >= 90 && sector < 180) { activeSkin = '👑'; localStorage.setItem('activeSkin', '👑'); coinBtn.innerText = '👑'; alert("Выпал скин Короны 👑!"); }
+                else if (sector >= 180 && sector < 270) { coins += 2500; alert("Вы выиграли 2500 монет!"); }
+                else { clickMultiplier = 2; alert("Буст x2 активирован!"); }
 
                 localStorage.setItem('coins', coins);
                 localStorage.setItem('spinCooldowTime', Date.now() + 86400000);
@@ -309,24 +106,26 @@
             }, 4100);
         }
 
-        // ТАЙМЕР
         function checkTimer() {
             const btn = document.getElementById('spin-free');
             const timerBox = document.getElementById('timer-box');
-            let cooldown = localStorage.getItem('spinCooldowTime');
+            let cooldown = parseInt(localStorage.getItem('spinCooldowTime')) || 0;
 
             if (spinning) return;
 
-if (!cooldown || Date.now() >= parseInt(cooldown)) {
-btn.disabled = false;
-timerBox.innerText = "Рулетка доступна!";
-} else {
-btn.disabled = true;
-let rest = parseInt(cooldown) - Date.now();
-let h = Math.floor(rest / 3600000);
-let m = Math.floor((rest % 3600000) / 60000);
-let s = Math.floor((rest % 60000) / 1000);
-timerBox.innerText = "Доступно через: " + h + "ч " + m + "м " + s + "с";
-setTimeout(checkTimer, 1000);
-}
-}
+            if (Date.now() >= cooldown) {
+                btn.disabled = false;
+                timerBox.innerText = "Рулетка доступна!";
+            } else {
+                btn.disabled = true;
+                let rest = cooldown - Date.now();
+                let h = Math.floor(rest / 3600000);
+                let m = Math.floor((rest % 3600000) / 60000);
+                let s = Math.floor((rest % 60000) / 1000);
+                timerBox.innerText = "Доступно через: " + h + "ч " + m + "м " + s + "с";
+                setTimeout(checkTimer, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
