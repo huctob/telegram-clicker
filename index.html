@@ -24,16 +24,11 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
+        margin: 0; padding: 0; height: 100%; overflow: hidden;
         background: radial-gradient(circle at 50% 30%, var(--bg-2) 0%, var(--bg-1) 100%);
         color: var(--text);
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
+        user-select: none; -webkit-user-select: none; touch-action: manipulation;
     }
 
     /* ===== Фон ===== */
@@ -46,612 +41,193 @@
 
     /* ===== Экраны ===== */
     .screen {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        position: absolute;
-        inset: 0;
-        padding: 16px 16px 90px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        z-index: 1;
+        display: none; flex-direction: column; align-items: center;
+        position: absolute; inset: 0; padding: 16px 16px 90px;
+        overflow-y: auto; overflow-x: hidden; z-index: 1;
     }
     .screen.active { display: flex; }
     .screen::-webkit-scrollbar { width: 4px; }
     .screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
 
-    /* ===== Верхняя панель монет ===== */
+    /* ===== Верхняя панель ===== */
     .top-bar {
-        width: 100%;
-        max-width: 480px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-        flex-shrink: 0;
-        gap: 8px;
+        width: 100%; max-width: 480px;
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 12px; flex-shrink: 0; gap: 8px;
     }
-    .coins-display {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 18px;
-        background: rgba(245, 176, 65, 0.1);
-        border: 1px solid rgba(245, 176, 65, 0.3);
-        border-radius: 30px;
-        font-size: 20px;
-        font-weight: bold;
-        box-shadow: 0 0 20px rgba(245, 176, 65, 0.15);
+    .coins-display, .carrots-display {
+        display: flex; align-items: center; gap: 8px; padding: 10px 18px;
+        border-radius: 30px; font-size: 18px; font-weight: bold;
     }
-    .coins-value {
-        background: linear-gradient(135deg, #ffe066 0%, #f5b041 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 2px 8px rgba(245, 176, 65, 0.4));
-    }
-    .coins-value.bump { animation: bump 0.2s ease; }
+    .coins-display { background: rgba(245, 176, 65, 0.1); border: 1px solid rgba(245, 176, 65, 0.3); box-shadow: 0 0 20px rgba(245, 176, 65, 0.15); }
+    .carrots-display { background: rgba(255, 107, 157, 0.1); border: 1px solid rgba(255, 107, 157, 0.3); box-shadow: 0 0 20px rgba(255, 107, 157, 0.15); }
+    
+    .coins-value { background: linear-gradient(135deg, #ffe066 0%, #f5b041 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .carrots-value { background: linear-gradient(135deg, #ff9ec7 0%, #ff6b9d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .coins-value.bump, .carrots-value.bump { animation: bump 0.2s ease; }
     @keyframes bump { 50% { transform: scale(1.15); } }
 
-    .carrots-display {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 10px 16px;
-        background: rgba(255, 107, 157, 0.1);
-        border: 1px solid rgba(255, 107, 157, 0.3);
-        border-radius: 30px;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    .carrots-value {
-        background: linear-gradient(135deg, #ff9ec7 0%, #ff6b9d 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
     /* ===== Кликер ===== */
-    .clicker-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        max-width: 480px;
-    }
-
-    .bunny-wrapper {
-        position: relative;
-        width: 240px;
-        height: 240px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: transform 0.06s ease;
-    }
+    .clicker-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; }
+    .bunny-wrapper { position: relative; width: 240px; height: 240px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.06s ease; }
     .bunny-wrapper:active { transform: scale(0.95); }
-
-    .bunny-ring {
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        background: conic-gradient(from 0deg, #f5b041, #ff6b9d, #a55eea, #2e86de, #2ed573, #f5b041);
-        animation: spin-ring 8s linear infinite;
-        filter: blur(3px);
-        opacity: 0.85;
-    }
+    .bunny-ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, #f5b041, #ff6b9d, #a55eea, #2e86de, #2ed573, #f5b041); animation: spin-ring 8s linear infinite; filter: blur(3px); opacity: 0.85; }
     @keyframes spin-ring { to { transform: rotate(360deg); } }
-    .bunny-ring-inner {
-        position: absolute;
-        inset: 8px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #2a2a44 0%, #15151f 100%);
-    }
-    .bunny-btn {
-        position: relative;
-        z-index: 2;
-        width: 195px;
-        height: 195px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 95px;
-        background: radial-gradient(circle at 35% 30%, #ffe066 0%, #f5b041 50%, #d4a017 100%);
-        box-shadow:
-            inset 0 8px 20px rgba(255,255,255,0.5),
-            inset 0 -12px 24px rgba(0,0,0,0.35),
-            0 15px 40px rgba(245, 176, 65, 0.4);
-        will-change: transform;
-        line-height: 1;
-    }
+    .bunny-ring-inner { position: absolute; inset: 8px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #2a2a44 0%, #15151f 100%); }
+    .bunny-btn { position: relative; z-index: 2; width: 195px; height: 195px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 95px; background: radial-gradient(circle at 35% 30%, #ffe066 0%, #f5b041 50%, #d4a017 100%); box-shadow: inset 0 8px 20px rgba(255,255,255,0.5), inset 0 -12px 24px rgba(0,0,0,0.35), 0 15px 40px rgba(245, 176, 65, 0.4); will-change: transform; line-height: 1; }
     .bunny-btn.pulse { animation: bunny-pulse 0.15s ease; }
-    @keyframes bunny-pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(0.9); }
-        100% { transform: scale(1); }
-    }
+    @keyframes bunny-pulse { 0% { transform: scale(1); } 50% { transform: scale(0.9); } 100% { transform: scale(1); } }
 
-    .bunny-name {
-        margin-top: 20px;
-        font-size: 16px;
-        font-weight: bold;
-        color: var(--text-dim);
-        text-align: center;
-    }
+    .bunny-name { margin-top: 20px; font-size: 16px; font-weight: bold; color: var(--text-dim); text-align: center; }
     .bunny-name .level { color: var(--accent); }
+    .status-badges { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+    .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.08); color: var(--text-dim); }
+    .status-badge.happy { background: rgba(46, 213, 115, 0.15); color: var(--green); }
+    .status-badge.hungry { background: rgba(255, 71, 87, 0.15); color: var(--red); }
 
-    .stats-row {
-        display: flex;
-        gap: 10px;
-        margin-top: 18px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .stat-chip {
-        padding: 8px 14px;
-        background: var(--panel);
-        border: 1px solid var(--panel-border);
-        border-radius: 12px;
-        font-size: 12px;
-        color: var(--text-dim);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
+    .stats-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; justify-content: center; }
+    .stat-chip { padding: 8px 14px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 12px; font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
     .stat-chip b { color: var(--accent); }
-
-    .boost-bar {
-        margin-top: 16px;
-        padding: 10px 18px;
-        background: rgba(46, 213, 115, 0.12);
-        border: 1px solid rgba(46, 213, 115, 0.4);
-        border-radius: 14px;
-        font-size: 13px;
-        font-weight: bold;
-        color: var(--green);
-        box-shadow: 0 0 20px rgba(46, 213, 115, 0.2);
-        display: none;
-        align-items: center;
-        gap: 8px;
-    }
+    .boost-bar { margin-top: 16px; padding: 10px 18px; background: rgba(46, 213, 115, 0.12); border: 1px solid rgba(46, 213, 115, 0.4); border-radius: 14px; font-size: 13px; font-weight: bold; color: var(--green); display: none; align-items: center; gap: 8px; }
     .boost-bar.visible { display: flex; }
 
     /* ===== Частицы клика ===== */
-    .float-coin {
-        position: fixed;
-        font-size: 20px;
-        font-weight: bold;
-        color: var(--accent);
-        pointer-events: none;
-        z-index: 50;
-        text-shadow: 0 0 10px rgba(245, 176, 65, 0.9);
-        animation: float-up 0.9s ease-out forwards;
-        white-space: nowrap;
-    }
-    @keyframes float-up {
-        0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
-        100% { transform: translate(-50%, -90px) scale(1.4); opacity: 0; }
-    }
+    .float-coin { position: fixed; font-size: 20px; font-weight: bold; color: var(--accent); pointer-events: none; z-index: 50; text-shadow: 0 0 10px rgba(245, 176, 65, 0.9); animation: float-up 0.9s ease-out forwards; white-space: nowrap; }
+    @keyframes float-up { 0% { transform: translate(-50%, 0) scale(1); opacity: 1; } 100% { transform: translate(-50%, -90px) scale(1.4); opacity: 0; } }
 
-    /* ===== Секции ===== */
+    /* ===== Секции и списки ===== */
     .section-title { font-size: 24px; margin: 0 0 6px; font-weight: bold; text-align: center; }
     .section-sub { color: var(--text-dim); font-size: 13px; margin: 0 0 18px; text-align: center; }
+    .shop-list, .ach-list, .inv-grid { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; }
 
-    .shop-list, .ach-list {
-        width: 100%;
-        max-width: 480px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+    /* Карточки */
+    .card-item {
+        display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+        background: var(--panel); border: 1px solid var(--panel-border);
+        border-radius: 16px; transition: all 0.2s ease;
     }
-    .shop-item, .ach-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        background: var(--panel);
-        border: 1px solid var(--panel-border);
-        border-radius: 16px;
-        transition: all 0.2s ease;
+    .card-item.buyable { border-color: rgba(245, 176, 65, 0.4); box-shadow: 0 0 15px rgba(245, 176, 65, 0.1); }
+    .card-item.maxed { opacity: 0.6; }
+    .card-icon { font-size: 28px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 12px; flex-shrink: 0; }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
+    .card-desc { font-size: 12px; color: var(--text-dim); }
+    .card-level { font-size: 11px; color: var(--accent); font-weight: bold; margin-top: 4px; }
+    
+    /* Кнопки */
+    .btn-action {
+        padding: 10px 14px; background: linear-gradient(135deg, #2ed573, #26af5f);
+        border: none; border-radius: 12px; color: #fff; font-weight: bold; font-size: 13px;
+        cursor: pointer; white-space: nowrap; transition: all 0.15s ease;
+        box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3); font-family: inherit;
     }
-    .shop-item.buyable { border-color: rgba(245, 176, 65, 0.4); box-shadow: 0 0 15px rgba(245, 176, 65, 0.1); }
-    .shop-item.maxed { opacity: 0.6; }
-    .shop-icon {
-        font-size: 28px;
-        width: 48px; height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.05);
-        border-radius: 12px;
-        flex-shrink: 0;
-    }
-    .shop-info { flex: 1; min-width: 0; }
-    .shop-name { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
-    .shop-desc { font-size: 12px; color: var(--text-dim); }
-    .shop-level { font-size: 11px; color: var(--accent); font-weight: bold; margin-top: 4px; }
-    .shop-buy {
-        padding: 10px 14px;
-        background: linear-gradient(135deg, #2ed573, #26af5f);
-        border: none;
-        border-radius: 12px;
-        color: #fff;
-        font-weight: bold;
-        font-size: 13px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.15s ease;
-        box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
-    }
-    .shop-buy:active:not(:disabled) { transform: scale(0.95); }
-    .shop-buy:disabled { background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; }
-    .shop-buy.maxed-btn { background: rgba(245, 176, 65, 0.2); color: var(--accent); box-shadow: none; cursor: default; }
+    .btn-action:active:not(:disabled) { transform: scale(0.95); }
+    .btn-action:disabled { background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; }
+    .btn-action.maxed-btn { background: rgba(245, 176, 65, 0.2); color: var(--accent); box-shadow: none; cursor: default; }
 
-    /* ===== Достижения ===== */
-    .ach-item.locked { opacity: 0.5; }
-    .ach-item.unlocked { border-color: rgba(46, 213, 115, 0.5); box-shadow: 0 0 15px rgba(46, 213, 115, 0.15); }
-    .ach-icon {
-        font-size: 24px;
-        width: 44px; height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.05);
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-    .ach-item.unlocked .ach-icon {
-        background: rgba(46, 213, 115, 0.15);
-        box-shadow: 0 0 15px rgba(46, 213, 115, 0.3);
-    }
+    /* Достижения и Инвентарь */
+    .ach-item.locked, .inv-item.locked { opacity: 0.5; }
+    .ach-item.unlocked, .inv-item.unlocked { border-color: rgba(46, 213, 115, 0.5); box-shadow: 0 0 15px rgba(46, 213, 115, 0.15); }
+    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+    .inv-item { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px 10px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 16px; }
+    .inv-icon { font-size: 40px; margin-bottom: 8px; }
+    .inv-name { font-size: 12px; font-weight: bold; }
+    .inv-count { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
 
     /* ===== Рулетка ===== */
     .wheel-box { position: relative; margin: 10px auto; width: 280px; height: 280px; flex-shrink: 0; }
-    .pointer {
-        position: absolute;
-        top: -12px; left: 50%;
-        transform: translateX(-50%);
-        width: 0; height: 0;
-        border-left: 16px solid transparent;
-        border-right: 16px solid transparent;
-        border-top: 28px solid var(--red);
-        z-index: 10;
-        filter: drop-shadow(0 4px 10px rgba(255, 71, 87, 0.6));
-    }
-    .wheel {
-        width: 280px;
-        height: 280px;
-        border-radius: 50%;
-        border: 8px solid #1e1e2f;
-        background: conic-gradient(
-            #ff4757 0deg 90deg,
-            #2e86de 90deg 180deg,
-            #2ed573 180deg 270deg,
-            #ffa502 270deg 360deg
-        );
-        transition: transform 4.2s cubic-bezier(0.12, 0.8, 0.1, 1);
-        position: relative;
-        box-shadow: 0 20px 45px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,0,0,0.4), 0 0 60px rgba(245, 176, 65, 0.15);
-    }
-    .wheel-icon {
-        position: absolute;
-        font-size: 38px;
-        width: 46px; height: 46px;
-        top: 117px; left: 117px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
-    }
+    .pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid var(--red); z-index: 10; filter: drop-shadow(0 4px 10px rgba(255, 71, 87, 0.6)); }
+    .wheel { width: 280px; height: 280px; border-radius: 50%; border: 8px solid #1e1e2f; background: conic-gradient(#ff4757 0deg 90deg, #2e86de 90deg 180deg, #2ed573 180deg 270deg, #ffa502 270deg 360deg); transition: transform 4.2s cubic-bezier(0.12, 0.8, 0.1, 1); position: relative; box-shadow: 0 20px 45px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,0,0,0.4), 0 0 60px rgba(245, 176, 65, 0.15); }
+    .wheel-icon { position: absolute; font-size: 38px; width: 46px; height: 46px; top: 117px; left: 117px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8)); }
     .wi-1 { transform: rotate(45deg) translateY(-85px) rotate(-45deg); }
     .wi-2 { transform: rotate(135deg) translateY(-85px) rotate(-135deg); }
     .wi-3 { transform: rotate(225deg) translateY(-85px) rotate(-225deg); }
     .wi-4 { transform: rotate(315deg) translateY(-85px) rotate(-315deg); }
-    .wheel-center {
-        position: absolute;
-        width: 52px; height: 52px;
-        background: #fff;
-        border-radius: 50%;
-        top: 106px; left: 106px;
-        z-index: 5;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-    }
-
-    .btn-spin {
-        background: linear-gradient(135deg, #2ed573, #26af5f);
-        color: #fff;
-        border: none;
-        padding: 16px 44px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 30px;
-        cursor: pointer;
-        margin-top: 22px;
-        box-shadow: 0 8px 24px rgba(46, 213, 115, 0.4);
-        transition: all 0.2s ease;
-        letter-spacing: 0.5px;
-    }
+    .wheel-center { position: absolute; width: 52px; height: 52px; background: #fff; border-radius: 50%; top: 106px; left: 106px; z-index: 5; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .btn-spin { background: linear-gradient(135deg, #2ed573, #26af5f); color: #fff; border: none; padding: 16px 44px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; margin-top: 22px; box-shadow: 0 8px 24px rgba(46, 213, 115, 0.4); transition: all 0.2s ease; letter-spacing: 0.5px; font-family: inherit; }
     .btn-spin:active:not(:disabled) { transform: scale(0.96); }
     .btn-spin:disabled { background: #334155 !important; box-shadow: none; color: #64748b; cursor: not-allowed; }
     .timer-text { margin-top: 12px; font-size: 14px; color: var(--text-dim); font-weight: 500; text-align: center; }
 
     /* ===== Навигация ===== */
-    .nav-bar {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        height: 75px;
-        background: rgba(15, 15, 26, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        display: flex;
-        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
-        z-index: 100;
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-    .nav-item {
-        flex: 1;
-        background: none;
-        border: none;
-        color: #64748b;
-        font-size: 11px;
-        font-weight: bold;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        transition: all 0.2s ease;
-        position: relative;
-        font-family: inherit;
-    }
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(15, 15, 26, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-item { flex: 1; background: none; border: none; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s ease; position: relative; font-family: inherit; }
     .nav-item .nav-icon { font-size: 22px; transition: transform 0.2s ease; }
     .nav-item.active { color: var(--accent); text-shadow: 0 0 15px rgba(245, 176, 65, 0.6); }
     .nav-item.active .nav-icon { transform: scale(1.15); }
-    .nav-item.active::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 25%; right: 25%;
-        height: 3px;
-        background: var(--accent);
-        border-radius: 0 0 3px 3px;
-        box-shadow: 0 0 10px var(--accent-glow);
-    }
-    .nav-badge {
-        position: absolute;
-        top: 8px;
-        left: 50%;
-        transform: translateX(6px);
-        min-width: 16px;
-        height: 16px;
-        background: var(--red);
-        border-radius: 8px;
-        font-size: 10px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 4px;
-        box-shadow: 0 2px 6px rgba(255,71,87,0.5);
-    }
+    .nav-item.active::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 3px; background: var(--accent); border-radius: 0 0 3px 3px; box-shadow: 0 0 10px var(--accent-glow); }
+    .nav-badge { position: absolute; top: 8px; left: 50%; transform: translateX(6px); min-width: 16px; height: 16px; background: var(--red); border-radius: 8px; font-size: 10px; color: #fff; display: flex; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 2px 6px rgba(255,71,87,0.5); }
 
-    /* ===== Тосты ===== */
-    #toast-container {
-        position: fixed;
-        top: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 300;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        pointer-events: none;
-        width: 90%;
-        max-width: 400px;
-    }
-    .toast {
-        background: rgba(30, 30, 50, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(245, 176, 65, 0.5);
-        color: #fff;
-        padding: 14px 20px;
-        border-radius: 14px;
-        font-size: 14px;
-        font-weight: bold;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(245, 176, 65, 0.3);
-        text-align: center;
-        animation: toast-in 0.3s cubic-bezier(0.2, 1.2, 0.4, 1) forwards;
-    }
+    /* ===== Тосты и Модалка ===== */
+    #toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
+    .toast { background: rgba(30, 30, 50, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(245, 176, 65, 0.5); color: #fff; padding: 14px 20px; border-radius: 14px; font-size: 14px; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(245, 176, 65, 0.3); text-align: center; animation: toast-in 0.3s cubic-bezier(0.2, 1.2, 0.4, 1) forwards; }
     .toast.success { border-color: rgba(46, 213, 115, 0.6); box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(46, 213, 115, 0.3); }
     .toast.achievement { border-color: rgba(165, 94, 234, 0.6); box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(165, 94, 234, 0.4); }
     .toast.out { animation: toast-out 0.3s ease forwards; }
     @keyframes toast-in { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes toast-out { to { transform: translateY(-100px); opacity: 0; } }
 
-    /* ===== Модалка ===== */
-    .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 400;
-        padding: 20px;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 400; padding: 20px; }
     .modal-overlay.show { display: flex; animation: fade-in 0.3s ease; }
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-    .modal-card {
-        background: linear-gradient(160deg, #2a2a44 0%, #15151f 100%);
-        border: 1px solid rgba(245, 176, 65, 0.4);
-        border-radius: 24px;
-        padding: 30px 24px;
-        text-align: center;
-        max-width: 340px;
-        width: 100%;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 60px rgba(245, 176, 65, 0.2);
-        animation: pop-in 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
-    }
+    .modal-card { background: linear-gradient(160deg, #2a2a44 0%, #15151f 100%); border: 1px solid rgba(245, 176, 65, 0.4); border-radius: 24px; padding: 30px 24px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 60px rgba(245, 176, 65, 0.2); animation: pop-in 0.4s cubic-bezier(0.2, 1.4, 0.4, 1); }
     @keyframes pop-in { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .modal-icon { font-size: 70px; margin-bottom: 12px; }
     .modal-title { font-size: 22px; font-weight: bold; margin-bottom: 6px; }
     .modal-sub { color: var(--text-dim); font-size: 14px; margin-bottom: 22px; }
-    .modal-btn {
-        background: linear-gradient(135deg, #f5b041, #d4a017);
-        color: #1a1a2e;
-        border: none;
-        padding: 14px 40px;
-        border-radius: 30px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 6px 20px rgba(245, 176, 65, 0.4);
-        transition: transform 0.15s ease;
-        font-family: inherit;
-    }
+    .modal-btn { background: linear-gradient(135deg, #f5b041, #d4a017); color: #1a1a2e; border: none; padding: 14px 40px; border-radius: 30px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px rgba(245, 176, 65, 0.4); transition: transform 0.15s ease; font-family: inherit; }
     .modal-btn:active { transform: scale(0.96); }
 
     /* ===== Ежедневный бонус ===== */
-    .daily-card {
-        width: 100%;
-        max-width: 480px;
-        padding: 16px 20px;
-        background: linear-gradient(135deg, rgba(245,176,65,0.15) 0%, rgba(165,94,234,0.15) 100%);
-        border: 1px solid rgba(245, 176, 65, 0.4);
-        border-radius: 18px;
-        margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
+    .daily-card { width: 100%; max-width: 480px; padding: 16px 20px; background: linear-gradient(135deg, rgba(245,176,65,0.15) 0%, rgba(165,94,234,0.15) 100%); border: 1px solid rgba(245, 176, 65, 0.4); border-radius: 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; }
     .daily-icon { font-size: 34px; }
     .daily-info { flex: 1; }
     .daily-title { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
     .daily-desc { font-size: 12px; color: var(--text-dim); }
-    .daily-btn {
-        padding: 10px 16px;
-        background: linear-gradient(135deg, #f5b041, #d4a017);
-        border: none;
-        border-radius: 12px;
-        color: #1a1a2e;
-        font-weight: bold;
-        font-size: 13px;
-        cursor: pointer;
-        white-space: nowrap;
-        font-family: inherit;
-    }
+    .daily-btn { padding: 10px 16px; background: linear-gradient(135deg, #f5b041, #d4a017); border: none; border-radius: 12px; color: #1a1a2e; font-weight: bold; font-size: 13px; cursor: pointer; white-space: nowrap; font-family: inherit; }
     .daily-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-
-    .reset-btn {
-        margin: 30px auto 10px;
-        padding: 10px 20px;
-        background: rgba(255, 71, 87, 0.1);
-        border: 1px solid rgba(255, 71, 87, 0.3);
-        border-radius: 12px;
-        color: var(--red);
-        font-size: 12px;
-        cursor: pointer;
-        display: block;
-        font-family: inherit;
-    }
-
-    /* Статус кролика */
-    .status-badges {
-        display: flex;
-        gap: 8px;
-        margin-top: 8px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .status-badge {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: bold;
-        background: rgba(255,255,255,0.08);
-        color: var(--text-dim);
-    }
-    .status-badge.happy { background: rgba(46, 213, 115, 0.15); color: var(--green); }
-    .status-badge.hungry { background: rgba(255, 71, 87, 0.15); color: var(--red); }
+    .reset-btn { margin: 30px auto 10px; padding: 10px 20px; background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 12px; color: var(--red); font-size: 12px; cursor: pointer; display: block; font-family: inherit; }
 </style>
 </head>
 <body>
 
-<div class="bg-orbs">
-    <div class="orb"></div>
-    <div class="orb"></div>
-    <div class="orb"></div>
-</div>
-
+<div class="bg-orbs"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
 <div id="toast-container"></div>
 
 <!-- ========== ЭКРАН КЛИКЕР ========== -->
 <div id="screen-clicker" class="screen active">
     <div class="top-bar">
-        <div class="coins-display">
-            <span>🪙</span>
-            <span class="coins-value" id="coins-value">0</span>
-        </div>
-        <div class="carrots-display">
-            <span>🥕</span>
-            <span class="carrots-value" id="carrots-value">0</span>
-        </div>
+        <div class="coins-display"><span>🪙</span><span class="coins-value" id="coins-value">0</span></div>
+        <div class="carrots-display"><span>🥕</span><span class="carrots-value" id="carrots-value">0</span></div>
     </div>
-
     <div class="clicker-area">
         <div class="bunny-wrapper" id="bunny-wrapper">
-            <div class="bunny-ring"></div>
-            <div class="bunny-ring-inner"></div>
+            <div class="bunny-ring"></div><div class="bunny-ring-inner"></div>
             <div class="bunny-btn" id="bunny-btn">🐰</div>
         </div>
-
-        <div class="bunny-name">
-            Кролик · <span class="level">Ур. <span id="bunny-level">1</span></span>
-        </div>
-
+        <div class="bunny-name">Кролик · <span class="level">Ур. <span id="bunny-level">1</span></span></div>
         <div class="status-badges">
-            <span class="status-badge" id="status-mood">😊 Настроение: отличное</span>
+            <span class="status-badge happy" id="status-mood">😊 Настроение: отличное</span>
             <span class="status-badge" id="status-hunger">🍽 Сытость: 100%</span>
         </div>
-
         <div class="stats-row">
             <div class="stat-chip">За клик: <b id="per-click">1</b></div>
             <div class="stat-chip">Кликов: <b id="total-clicks">0</b></div>
-            <div class="stat-chip">Монет всего: <b id="total-earned">0</b></div>
+            <div class="stat-chip">Всего монет: <b id="total-earned">0</b></div>
         </div>
-
-        <div class="boost-bar" id="boost-bar">
-            <span>⚡ Буст x2</span>
-            <span id="boost-timer">0:00</span>
-        </div>
+        <div class="boost-bar" id="boost-bar"><span>⚡ Буст x2</span><span id="boost-timer">0:00</span></div>
     </div>
 </div>
 
 <!-- ========== ЭКРАН МАГАЗИН ========== -->
 <div id="screen-shop" class="screen">
     <div class="top-bar">
-        <div class="coins-display">
-            <span>🪙</span>
-            <span class="coins-value" id="coins-value-shop">0</span>
-        </div>
-        <div class="carrots-display">
-            <span>🥕</span>
-            <span class="carrots-value" id="carrots-value-shop">0</span>
-        </div>
+        <div class="coins-display"><span>🪙</span><span class="coins-value" id="coins-value-shop">0</span></div>
+        <div class="carrots-display"><span>🥕</span><span class="carrots-value" id="carrots-value-shop">0</span></div>
     </div>
     <h2 class="section-title">Магазин</h2>
     <p class="section-sub">Прокачай своего кролика</p>
-
     <div class="daily-card" id="daily-card">
         <div class="daily-icon">🎁</div>
         <div class="daily-info">
@@ -660,57 +236,47 @@
         </div>
         <button class="daily-btn" id="daily-btn">Забрать</button>
     </div>
-
     <div class="shop-list" id="shop-list"></div>
     <button class="reset-btn" id="reset-btn">Сбросить прогресс</button>
+</div>
+
+<!-- ========== ЭКРАН КЕЙСЫ ========== -->
+<div id="screen-cases" class="screen">
+    <h2 class="section-title">Кейсы</h2>
+    <p class="section-sub">Испытай удачу и получи редкие скины!</p>
+    <div class="shop-list" id="cases-list"></div>
 </div>
 
 <!-- ========== ЭКРАН РУЛЕТКА ========== -->
 <div id="screen-roulette" class="screen">
     <h2 class="section-title">Колесо Удачи</h2>
     <p class="section-sub">Испытай удачу раз в 24 часа</p>
-
     <div class="wheel-box">
         <div class="pointer"></div>
         <div class="wheel" id="wheel-element">
-            <div class="wheel-icon wi-1">💰</div>
-            <div class="wheel-icon wi-2">⚡️</div>
-            <div class="wheel-icon wi-3">💎</div>
-            <div class="wheel-icon wi-4">🥕</div>
+            <div class="wheel-icon wi-1">💰</div><div class="wheel-icon wi-2">⚡️</div>
+            <div class="wheel-icon wi-3">💎</div><div class="wheel-icon wi-4">🥕</div>
             <div class="wheel-center">🎁</div>
         </div>
     </div>
-
     <button class="btn-spin" id="spin-btn">КРУТИТЬ БЕСПЛАТНО</button>
     <div class="timer-text" id="timer-text"></div>
 </div>
 
-<!-- ========== ЭКРАН ДОСТИЖЕНИЯ ========== -->
-<div id="screen-achievements" class="screen">
-    <h2 class="section-title">Достижения</h2>
-    <p class="section-sub" id="ach-progress">Открыто 0 из 0</p>
-    <div class="ach-list" id="ach-list"></div>
+<!-- ========== ЭКРАН ИНВЕНТАРЬ ========== -->
+<div id="screen-inventory" class="screen">
+    <h2 class="section-title">Инвентарь</h2>
+    <p class="section-sub">Твои скины и предметы</p>
+    <div class="inv-grid" id="inventory-grid"></div>
 </div>
 
 <!-- ========== НАВИГАЦИЯ ========== -->
 <div class="nav-bar">
-    <button class="nav-item active" data-tab="clicker">
-        <span class="nav-icon">🐰</span>
-        <span>Кролик</span>
-    </button>
-    <button class="nav-item" data-tab="shop">
-        <span class="nav-icon">🛒</span>
-        <span>Магазин</span>
-    </button>
-    <button class="nav-item" data-tab="roulette">
-        <span class="nav-icon">🎡</span>
-        <span>Рулетка</span>
-        <span class="nav-badge" id="spin-badge" style="display:none">!</span>
-    </button>
-    <button class="nav-item" data-tab="achievements">
-        <span class="nav-icon">🏆</span>
-        <span>Награды</span>
-    </button>
+    <button class="nav-item active" data-tab="clicker"><span class="nav-icon">🐰</span><span>Кролик</span></button>
+    <button class="nav-item" data-tab="shop"><span class="nav-icon">🛒</span><span>Магазин</span></button>
+    <button class="nav-item" data-tab="cases"><span class="nav-icon">📦</span><span>Кейсы</span></button>
+    <button class="nav-item" data-tab="roulette"><span class="nav-icon">🎡</span><span>Рулетка</span><span class="nav-badge" id="spin-badge" style="display:none">!</span></button>
+    <button class="nav-item" data-tab="inventory"><span class="nav-icon">🎒</span><span>Инвентарь</span></button>
 </div>
 
 <!-- ========== МОДАЛКА ========== -->
@@ -727,28 +293,30 @@
 (function () {
     'use strict';
 
-    /* ============================================================
-       КОНСТАНТЫ
-    ============================================================ */
-    var KEYS = {
-        coins: 'bs_coins',
-        carrots: 'bs_carrots',
-        totalClicks: 'bs_total_clicks',
-        totalEarned: 'bs_total_earned',
-        upgrades: 'bs_upgrades',
-        spinCooldown: 'bs_spin_cd',
-        boostUntil: 'bs_boost_until',
-        achievements: 'bs_achievements',
-        dailyClaimed: 'bs_daily_claimed',
-        hunger: 'bs_hunger',
-        lastFeed: 'bs_last_feed'
+    /* ================= СОСТОЯНИЕ И ДАННЫЕ ================= */
+    var state = {
+        coins: parseInt(localStorage.getItem('bs_coins')) || 0,
+        carrots: parseInt(localStorage.getItem('bs_carrots')) || 0,
+        totalClicks: parseInt(localStorage.getItem('bs_total_clicks')) || 0,
+        totalEarned: parseInt(localStorage.getItem('bs_total_earned')) || 0,
+        upgrades: JSON.parse(localStorage.getItem('bs_upgrades')) || {},
+        inventory: JSON.parse(localStorage.getItem('bs_inventory')) || ['🐰'],
+        activeSkin: localStorage.getItem('bs_active_skin') || '🐰',
+        spinCd: parseInt(localStorage.getItem('bs_spin_cd')) || 0,
+        boostUntil: parseInt(localStorage.getItem('bs_boost_until')) || 0,
+        dailyClaimed: parseInt(localStorage.getItem('bs_daily_claimed')) || 0,
+        hunger: parseInt(localStorage.getItem('bs_hunger')) || 100,
+        lastSeen: parseInt(localStorage.getItem('bs_last_seen')) || Date.now()
     };
 
-    var SPIN_CD_MS = 24 * 60 * 60 * 1000;
-    var BOOST_MS = 3 * 60 * 1000;
-    var BOOST_MULT = 2;
-    var SPIN_ANIM_MS = 4200;
-    var HUNGER_DECAY_PER_MIN = 1; // 1% в минуту
+    // Восстановление голода за время отсутствия
+    var offlineMins = Math.floor((Date.now() - state.lastSeen) / 60000);
+    if (offlineMins > 0) {
+        state.hunger = Math.max(0, state.hunger - offlineMins);
+    }
 
     var UPGRADES = [
-        { id: 'carrot',  name: 'Морковный сок',     desc: '+1 монета за клик
+        { id: 'carrot', name: 'Морковный сок', desc: '+1 монета за клик', icon: '🥕', baseCost: 50, growth: 1.6, perLevel: 1, max: 30 },
+        { id: 'golden', name: 'Золотая морковь', desc: '+5 монет за клик', icon: '🌟', baseCost: 500, growth: 1.75, perLevel: 5, max: 20 },
+        { id: 'diamond', name: 'Алмазное печенье', desc: '+25 монет за клик', icon: '💎', baseCost: 5000, growth: 1.9, perLevel: 25, max: 15 },
+        { id: 'cosmic', name: 'Космический кролик
