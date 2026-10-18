@@ -2,79 +2,80 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Clicker</title>
-    <!-- Подключаем официальный скрипт Telegram WebApp -->
-    <script src="https://telegram.org"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Кликер</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-background-color, #1f1f1f);
-            color: var(--tg-theme-text-color, #ffffff);
-            margin: 0;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            margin: 0;
             overflow: hidden;
             user-select: none;
         }
-        .score-container {
+
+        #coins-text {
             font-size: 32px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
+
+        /* Стиль монетки */
         .coin {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #ffd700, #ffa500);
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #ffdf00 0%, #d4af37 100%);
             border-radius: 50%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 -5px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 -8px 0 #b8860b, inset 0 8px 0 #fff79a;
+            cursor: pointer;
+            transition: transform 0.05s ease; /* Очень быстрый возврат формы */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 80px;
-            cursor: pointer;
-            transition: transform 0.05s ease;
-            -webkit-tap-highlight-color: transparent;
+            border: 8px solid #b8860b;
         }
+
+        /* Знак внутри монетки */
+        .coin::after {
+            content: "🪙";
+            font-size: 90px;
+        }
+
+        /* Эффект сжатия при самом клике */
         .coin:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
     </style>
 </head>
 <body>
 
-    <div class="score-container">Монеты: <span id="score">0</span></div>
-    <div class="coin" id="clickBtn">🪙</div>
+    <div id="coins-text">Монеты: 0</div>
+    
+    <!-- Монетка с привязанной функцией клика -->
+    <div class="coin" onclick="clickCoin()"></div>
 
     <script>
-        // Инициализируем Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяем приложение на весь экран
+        // 1. Загружаем монеты из памяти браузера при старте
+        let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 0;
+        
+        // Отображаем сохраненные монеты на экране
+        const scoreDisplay = document.getElementById('coins-text');
+        scoreDisplay.innerText = `Монеты: ${coins}`;
 
-        let score = 0;
-        const scoreEl = document.getElementById('score');
-        const clickBtn = document.getElementById('clickBtn');
-
-        // Загружаем сохраненный счет (если есть)
-        if (localStorage.getItem('clicker_score')) {
-            score = parseInt(localStorage.getItem('clicker_score'));
-            scoreEl.textContent = score;
-        }
-
-        // Обработчик клика
-        clickBtn.addEventListener('click', () => {
-            score++;
-            scoreEl.textContent = score;
-            localStorage.setItem('clicker_score', score);
+        // 2. Функция самого клика
+        function clickCoin() {
+            coins++;
+            scoreDisplay.innerText = `Монеты: ${coins}`;
             
-            // Легкая вибрация на смартфонах при клике
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-        });
+            // Сохраняем новое значение в память
+            localStorage.setItem('coins', coins);
+        }
     </script>
+
 </body>
 </html>
