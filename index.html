@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Clicker App</title>
     <style>
-        body { background: #121212; color: #fff; font-family: Arial; margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
+        body { background: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
         .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding-bottom: 70px; }
         .screen.active { display: flex; }
         
@@ -18,15 +18,28 @@
         .coin:active { transform: translateY(5px); box-shadow: 0 5px 0 #935116; }
         
         /* КАРТОЧКИ ПРИЗОВ */
-        .prize-preview { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
-        .prize-badge { padding: 5px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+        .prize-preview { display: flex; gap: 8px; margin-bottom: 25px; justify-content: center; }
+        .prize-badge { padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
         
-        .wheel-box { position: relative; margin: 20px auto; width: 250px; }
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ff3333; z-index: 10; }
-        .wheel { width: 250px; height: 250px; border-radius: 50%; border: 6px solid #333; background: conic-gradient(#e74c3c 0deg 90deg, #3498db 90deg 180deg, #2ecc71 180deg 270deg, #f1c40f 270deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); }
+        /* ОБНОВЛЕННАЯ РУЛЕТКА С ИКОНКАМИ */
+        .wheel-box { position: relative; margin: 20px auto; width: 260px; height: 260px; }
+        .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ff3333; z-index: 10; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
         
-        .btn-spin { background: #2ecc71; color: #fff; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 20px; cursor: pointer; margin-top: 15px; }
-        .btn-spin:disabled { background: #555; }
+        .wheel { width: 260px; height: 260px; border-radius: 50%; border: 8px solid #222; background: conic-gradient(#e74c3c 0deg 90deg, #3498db 90deg 180deg, #2ecc71 180deg 270deg, #f1c40f 270deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.4); }
+        
+        /* Иконки внутри секторов рулетки */
+        .wheel-icon { position: absolute; font-size: 32px; width: 40px; height: 40px; top: 110px; left: 110px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+        .wi-1 { transform: rotate(45deg) translateY(-75px) rotate(-45deg); }
+        .wi-2 { transform: rotate(135deg) translateY(-75px) rotate(-135deg); }
+        .wi-3 { transform: rotate(225deg) translateY(-75px) rotate(-225deg); }
+        .wi-4 { transform: rotate(315deg) translateY(-75px) rotate(-315deg); }
+
+        .wheel-center { position: absolute; width: 40px; height: 40px; background: #fff; border-radius: 50%; top: 110px; left: 110px; z-index: 5; box-shadow: 0 0 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        
+        /* СТИЛЬНЫЕ КНОПКИ */
+        .btn-spin { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; border: none; padding: 12px 35px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; margin-top: 15px; box-shadow: 0 5px 15px rgba(46,204,113,0.3); transition: 0.1s; }
+        .btn-spin:active { transform: scale(0.98); }
+        .btn-spin:disabled { background: #444 !important; box-shadow: none; color: #888; }
     </style>
 </head>
 <body>
@@ -39,29 +52,34 @@
 
     <!-- ЭКРАН 2: РУЛЕТКА -->
     <div id="screen-roulette" class="screen">
-        <h2>Колесо Удачи</h2>
+        <h2 style="margin-bottom: 5px;">Колесо Удачи</h2>
         
-        <!-- Плашки с призами -->
         <div class="prize-preview">
-            <span class="prize-badge" style="background:#e74c3c;">🔴 +500 / Беспл</span>
-            <span class="prize-badge" style="background:#3498db;">🔵 x2 / Буст</span>
-            <span class="prize-badge" style="background:#2ecc71;">🟢 +2500 / Звёзды</span>
+            <span class="prize-badge" style="background:#e74c3c;">🔴 +500</span>
+            <span class="prize-badge" style="background:#3498db;">🔵 Буст x2</span>
+            <span class="prize-badge" style="background:#2ecc71;">🟢 +2500</span>
             <span class="prize-badge" style="background:#f1c40f;">🟡 Скин 👑</span>
         </div>
 
         <div class="wheel-box">
             <div class="pointer"></div>
-            <div class="wheel" id="wheel-element"></div>
+            <div class="wheel" id="wheel-element">
+                <!-- Расставляем иконки призов по секторам -->
+                <div class="wheel-icon wi-1">💰</div>
+                <div class="wheel-icon wi-2">⚡</div>
+                <div class="wheel-icon wi-3">💎</div>
+                <div class="wheel-icon wi-4">👑</div>
+                <div class="wheel-center">🎁</div>
+            </div>
         </div>
 
         <button class="btn-spin" id="spin-free" onclick="startSpin()">Бесплатно</button>
         
-        <!-- Кнопка прокрутки за звезды -->
-        <button class="btn-spin" id="spin-stars" onclick="startStarsSpin()" style="background: linear-gradient(135deg, #0088cc, #005580); margin-top: 10px;">
+        <button class="btn-spin" id="spin-stars" onclick="startStarsSpin()" style="background: linear-gradient(135deg, #0088cc, #005580); box-shadow: 0 5px 15px rgba(0,136,204,0.3); margin-top: 10px;">
             Крутить за ⭐ 5 Звезд
         </button>
 
-        <div id="timer-box" style="margin-top: 10px; font-size: 14px; color: #888;"></div>
+        <div id="timer-box" style="margin-top: 12px; font-size: 14px; color: #aaa;"></div>
     </div>
 
     <!-- МЕНЮ -->
@@ -110,7 +128,6 @@
         coinBtn.addEventListener('mousedown', handleTap);
         coinBtn.addEventListener('touchstart', function(e) { e.preventDefault(); handleTap(e); }, { passive: false });
 
-        // ОБЫЧНЫЙ БЕСПЛАТНЫЙ СПИН
         function startSpin() {
             if (spinning) return;
             spinning = true;
@@ -125,22 +142,10 @@
                 document.getElementById('spin-stars').disabled = false;
                 let sector = (360 - (degrees % 360)) % 360;
 
-                if (sector >= 0 && sector < 90) { 
-                    coins += 500; 
-                    alert("Бесплатный приз: Вы выиграли 500 монет!"); 
-                } else if (sector >= 90 && sector < 180) { 
-                    activeSkin = '👑'; 
-                    localStorage.setItem('activeSkin', '👑'); 
-                    coinBtn.innerText = '👑'; 
-                    alert("Выпал скин Короны 👑!"); 
-                } else if (sector >= 180 && sector < 270) { 
-                    coins += 2500; 
-                    alert("Бесплатный приз: Вы выиграли 2500 монет!"); 
-                } else { 
-                    clickMultiplier = 2; 
-                    alert("Буст x2 начисление активирован на 3 минуты!"); 
-                    setTimeout(() => clickMultiplier = 1, 180000); 
-                }
+                if (sector >= 0 && sector < 90) { coins += 500; alert("Вы выиграли 500 монет!"); }
+                else if (sector >= 90 && sector < 180) { activeSkin = '👑'; localStorage.setItem('activeSkin', '👑'); coinBtn.innerText = '👑'; alert("Выпал скин Короны 👑!"); }
+                else if (sector >= 180 && sector < 270) { coins += 2500; alert("Вы выиграли 2500 монет!"); }
+                else { clickMultiplier = 2; alert("Буст x2 активирован на 3 минуты!"); setTimeout(() => clickMultiplier = 1, 180000); }
 
                 localStorage.setItem('coins', coins);
                 localStorage.setItem('spinCooldowTime', Date.now() + 86400000);
@@ -148,10 +153,8 @@
             }, 4100);
         }
 
-        // НОВАЯ ФУНКЦИЯ ДЛЯ ЗВЕЗДНОЙ РУЛЕТКИ
         function startStarsSpin() {
             if (spinning) return;
-            
             let payConfirm = confirm("Купить платную прокрутку за ⭐ 5 Звезд Telegram?");
             if (!payConfirm) return;
 
@@ -167,48 +170,29 @@
                 document.getElementById('spin-stars').disabled = false;
                 let sector = (360 - (degrees % 360)) % 360;
 
-                if (sector >= 0 && sector < 90) { 
-                    coins += 5000; 
-                    alert("🔥 ЗВЕЗДНЫЙ ПРИЗ! Вы выиграли +5,000 монет!"); 
-                } else if (sector >= 90 && sector < 180) { 
-                    activeSkin = '👑'; 
-                    localStorage.setItem('activeSkin', '👑'); 
-                    coinBtn.innerText = '👑'; 
-                    alert("Выпал скин Короны 👑!"); 
-                } else if (sector >= 180 && sector < 270) { 
-                    coins += 15000; 
-                    alert("💎 МЕГА-КУШ! Вы выиграли +15,000 монет!"); 
-                } else { 
-                    clickMultiplier = 5; 
-                    alert("💥 СУПЕР БУСТ! Клик дает x5 монет на 5 минут!"); 
-                    setTimeout(() => clickMultiplier = 1, 300000); 
-                }
+                if (sector >= 0 && sector < 90) { coins += 5000; alert("🔥 ЗВЕЗДНЫЙ ПРИЗ! Вы выиграли +5,000 монет!"); }
+                else if (sector >= 90 && sector < 180) { activeSkin = '👑'; localStorage.setItem('activeSkin', '👑'); coinBtn.innerText = '👑'; alert("Выпал скин Короны 👑!"); }
+                else if (sector >= 180 && sector < 270) { coins += 15000; alert("💎 МЕГА-КУШ! Вы выиграли +15,000 монет!"); }
+                else { clickMultiplier = 5; alert("💥 СУПЕР БУСТ! Клик дает x5 монет на 5 минут!"); setTimeout(() => clickMultiplier = 1, 300000); }
 
                 localStorage.setItem('coins', coins);
-                checkTimer();
-            }, 4100);
-        }
-
-        function checkTimer() {
-            const btn = document.getElementById('spin-free');
-            const timerBox = document.getElementById('timer-box');
-            let cooldown = parseInt(localStorage.getItem('spinCooldowTime')) || 0;
-
-            if (spinning) return;
-
-            if (Date.now() >= cooldown) {
-                btn.disabled = false;
-                timerBox.innerText = "Рулетка доступна!";
-            } else {
-                btn.disabled = true;
-                let rest = cooldown - Date.now();
-                let h = Math.floor(rest / 3600000);
-                let m = Math.floor((rest % 3600000) / 60000);
-                let s = Math.floor((rest % 60000) / 1000);
-                timerBox.innerText = "Доступно через: " + h + "ч " + m + "м " + s + "с";
-                setTimeout(checkTimer, 1000);
-            }
-        }
-    </script>
-</body>
-</html>
+checkTimer();
+}, 4100);
+}
+function checkTimer() {
+const btn = document.getElementById('spin-free');
+const timerBox = document.getElementById('timer-box');
+let cooldown = parseInt(localStorage.getItem('spinCooldowTime')) || 0;
+if (spinning) return;
+if (Date.now() >= cooldown) {
+btn.disabled = false;
+timerBox.innerText = "Рулетка доступна!";
+} else {
+btn.disabled = true;
+let rest = cooldown - Date.now();
+let h = Math.floor(rest / 3600000);
+let m = Math.floor((rest % 3600000) / 60000);
+let s = Math.floor((rest % 60000) / 1000);
+timerBox.innerText = "Доступно через: " + h + "ч " + m + "м " + s + "с";
+setTimeout(checkTimer, 1000);
+}
