@@ -316,6 +316,7 @@
             let cooldown = localStorage.getItem('spinCooldowTime');
 
             if (spinning) return;
+
 if (!cooldown || Date.now() >= parseInt(cooldown)) {
 btn.disabled = false;
 timerBox.innerText = "Рулетка доступна!";
