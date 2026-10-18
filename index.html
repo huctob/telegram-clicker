@@ -19,7 +19,7 @@
             flex-direction: column;
         }
 
-        /* ЭКРАНЫ */
+        /* ТАБЫ ЭКРАНОВ */
         .screen {
             display: none;
             flex-direction: column;
@@ -33,7 +33,7 @@
             display: flex;
         }
 
-        /* НИЖНЕЕ МЕНЮ (ВКЛАДКИ) */
+        /* НИЖНЕЕ МЕНЮ НАВИГАЦИИ */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -72,7 +72,7 @@
             margin-bottom: 2px;
         }
 
-        /* ИНТЕРФЕЙС КЛИКЕРА */
+        /* СТИЛИ ИГРЫ КЛИКЕРА */
         #coins-text {
             font-size: 38px;
             font-weight: 800;
@@ -115,7 +115,7 @@
             box-shadow: 0 5px 0 #935116, 0 10px 15px rgba(0, 0, 0, 0.8);
         }
 
-        /* ТЕКСТ +1 */
+        /* ЛЕТАЮЩИЙ ТЕКСТ +1 */
         .click-animation {
             position: absolute;
             color: #ffffff;
@@ -131,7 +131,7 @@
             100% { opacity: 0; transform: translate(-50%, -50%) translateY(-100px) scale(0.8); }
         }
 
-        /* ИНТЕРФЕЙС РУЛЕТКИ */
+        /* СТИЛИ КОЛЕСА РУЛЕТКИ */
         .roulette-container {
             position: relative;
             margin: 20px 0;
@@ -222,8 +222,8 @@
     <!-- ЭКРАН 2: РУЛЕТКА -->
     <div id="screen-roulette" class="screen">
         <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">Колесо Удачи</div>
-        <div style="font-size: 14px; color: #aaa; margin-bottom: 20px; text-align: center; padding: 0 20px;">
-            🔴 +500 монет | 🔵 Буст x2 клика<br>🟢 +2500 монет | 🟡 Редкий скин монеты
+        <div style="font-size: 13px; color: #aaa; margin-bottom: 20px; text-align: center; line-height: 18px;">
+            🔴 +500 монет | 🔵 Буст x2 клика<br>🟢 +2500 монет | 🟡 Скин Короны 👑
         </div>
 
         <div class="roulette-container">
@@ -240,53 +240,59 @@
         <div class="timer-text" id="cooldown-timer"></div>
     </div>
 
-    <!-- ТАБ-БАР (МЕНЮ) -->
+    <!-- ТАБ-БАР (КНОПКИ МЕНЮ) -->
     <div class="nav-bar">
-        <button class="nav-item active" onclick="switchScreen('clicker')">
+        <button id="nav-btn-clicker" class="nav-item active" onclick="switchScreen('clicker')">
             <span class="nav-icon">🎯</span>
             <span>Кликер</span>
         </button>
-        <button class="nav-item" onclick="switchScreen('roulette')">
+        <button id="nav-btn-roulette" class="nav-item" onclick="switchScreen('roulette')">
             <span class="nav-icon">🎡</span>
             <span>Рулетка</span>
         </button>
     </div>
 
     <script>
-        // БАЗА ДАННЫХ ИГРОКА
+        // ИНИЦИАЛИЗАЦИЯ ДАННЫХ
         let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 0;
         let activeSkin = localStorage.getItem('activeSkin') ? localStorage.getItem('activeSkin') : '⭐';
         let clickMultiplier = 1;
+        let isSpinning = false;
 
         const scoreDisplay = document.getElementById('coins-text');
         const coinVisual = document.getElementById('coin-visual');
         const coinElement = document.getElementById('target-coin');
         const wheel = document.getElementById('wheel-obj');
 
-        scoreDisplay.innerText = `Монеты: ${coins}`;
+        scoreDisplay.innerText = 'Монеты: ' + coins;
         coinVisual.innerText = activeSkin;
 
         // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
         function switchScreen(screenName) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (isSpinning) return;
+
+            document.getElementById('screen-clicker').classList.remove('active');
+            document.getElementById('screen-roulette').classList.remove('active');
+            
+            document.getElementById('nav-btn-clicker').classList.remove('active');
+            document.getElementById('nav-btn-roulette').classList.remove('active');
 
             if(screenName === 'clicker') {
-                document.getElementById('screen-clicker').className = 'screen active';
-                document.querySelectorAll('.nav-item')[0].className = 'nav-item active';
-                scoreDisplay.innerText = `Монеты: ${coins}`;
+                document.getElementById('screen-clicker').classList.add('active');
+                document.getElementById('nav-btn-clicker').classList.add('active');
+                scoreDisplay.innerText = 'Монеты: ' + coins;
             } else {
-                document.getElementById('screen-roulette').className = 'screen active';
-                document.querySelectorAll('.nav-item')[1].className = 'nav-item active';
+                document.getElementById('screen-roulette').classList.add('active');
+                document.getElementById('nav-btn-roulette').classList.add('active');
                 updateTimer();
             }
         }
 
-        // МЕХАНИКА КЛИКА
+        // МЕХАНИКА КЛИКА С ПРОСТЫМИ СТРОКАМИ
         function handleCoinTap(e) {
             let increment = 1 * clickMultiplier;
             coins += increment;
-            scoreDisplay.innerText = `Монеты: ${coins}`;
+            scoreDisplay.innerText = 'Монеты: ' + coins;
             localStorage.setItem('coins', coins);
 
             let clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -295,68 +301,62 @@
             const rect = coinElement.getBoundingClientRect();
             const x = clientX - rect.left;
             const y = clientY - rect.top;
-
             const plusOne = document.createElement('div');
-            plusOne.classList.add('click-animation');
-            plusOne.innerText = `+${increment}`;
-            plusOne.style.left = `${x}px`;
-            plusOne.style.top = `${y}px`;
-
-            coinElement.appendChild(plusOne);
+plusOne.classList.add('click-animation');
+// Железобетонная склейка строк без хитрых кавычек
+plusOne.innerText = '+' + increment;
+plusOne.style.left = x + 'px';
+plusOne.style.top = y + 'px';
+coinElement.appendChild(plusOne);
 setTimeout(() => plusOne.remove(), 500);
 }
 coinElement.addEventListener('mousedown', (e) => handleCoinTap(e));
 coinElement.addEventListener('touchstart', (e) => { e.preventDefault(); handleCoinTap(e); }, { passive: false });
-// МЕХАНИКА РУЛЕТКИ
-let isSpinning = false;
+// ЛОГИКА РУЛЕТКИ
 function runWheelLogic(onCompleteCallback) {
 if (isSpinning) return;
 isSpinning = true;
 document.getElementById('spin-btn-free').disabled = true;
 document.getElementById('spin-btn-stars').disabled = true;
-let randomDegrees = Math.floor(Math.random() * 360) + 1800; // Минимум 5 полных кругов
-wheel.style.transform = rotate(${randomDegrees}deg);
+let randomDegrees = Math.floor(Math.random() * 360) + 2160;
+wheel.style.transform = 'rotate(' + randomDegrees + 'deg)';
 setTimeout(() => {
 isSpinning = false;
 document.getElementById('spin-btn-stars').disabled = false;
 let actualDegrees = randomDegrees % 360;
-// Считаем приз (разворот против часовой стрелки относительно указателя)
 let prizeDegrees = (360 - actualDegrees) % 360;
 if (prizeDegrees >= 0 && prizeDegrees < 90) {
 coins += 500;
-alert("🎁 Приз: +500 обычных монет!");
+alert("🎁 Твой приз: +500 монет!");
 } else if (prizeDegrees >= 90 && prizeDegrees < 180) {
 activeSkin = '👑';
 localStorage.setItem('activeSkin', activeSkin);
 coinVisual.innerText = activeSkin;
-alert("🟡 Супер-приз! Вы выбили королевский скин монеты 👑!");
+alert("🟡 Супер-приз! Выбит королевский скин монеты 👑!");
 } else if (prizeDegrees >= 180 && prizeDegrees < 270) {
 coins += 2500;
-alert("🎁 Мега-куш: +2500 обычных монет!");
+alert("🎁 Мега-куш: +2500 монет!");
 } else {
 clickMultiplier = 2;
-alert("🔵 Буст активирован! Клик теперь дает x2 монет на время этой сессии!");
-setTimeout(() => { clickMultiplier = 1; }, 300000); // Сброс буста через 5 минут
+alert("🔵 Буст x2 клика активирован на 3 минуты!");
+setTimeout(() => { clickMultiplier = 1; }, 180000);
 }
 localStorage.setItem('coins', coins);
 if(onCompleteCallback) onCompleteCallback();
 updateTimer();
 }, 4000);
 }
-// БЕСПЛАТНЫЙ СПИН (Раз в 24 часа)
 function spinFree() {
 runWheelLogic(() => {
 let nextSpinTime = Date.now() + (24 * 60 * 60 * 1000);
 localStorage.setItem('nextSpinTime', nextSpinTime);
 });
 }
-// ПЛАТНЫЙ СПИН ЗА ЗВЕЗДЫ
 function spinStars() {
-// Имитация интеграции Telegram Stars платежа
-alert("Инициализация платежа 5 Telegram Stars... (В тестовом режиме прокрутка запускается сразу)");
+alert("Инициализация платежа 5 Telegram Stars... Тестовый спин запущен!");
 runWheelLogic();
 }
-// ТАЙМЕР ОЖИДАНИЯ
+// ОБНОВЛЕНИЕ ТАЙМЕРА
 function updateTimer() {
 const freeBtn = document.getElementById('spin-btn-free');
 const timerDiv = document.getElementById('cooldown-timer');
@@ -364,14 +364,14 @@ let nextSpin = localStorage.getItem('nextSpinTime');
 if (isSpinning) return;
 if (!nextSpin || Date.now() >= parseInt(nextSpin)) {
 freeBtn.disabled = false;
-timerDiv.innerText = "Бесплатная прокрутка доступна!";
+timerDiv.innerText = "Бесплатная рулетка доступна!";
 } else {
 freeBtn.disabled = true;
 let timeLeft = parseInt(nextSpin) - Date.now();
 let hours = Math.floor(timeLeft / (1000 * 60 * 60));
 let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-timerDiv.innerText = Следующий бесплатный спин через: ${hours}ч ${minutes}м ${seconds}с;
+timerDiv.innerText = 'Новый бесплатный спин через: ' + hours + 'ч ' + minutes + 'м ' + seconds + 'с';
 setTimeout(updateTimer, 1000);
 }
 }
