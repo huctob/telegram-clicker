@@ -1,177 +1,514 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Neon Bunny Clicker</title>
-    <style>
-        body { background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%); color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
-        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding-bottom: 80px; }
-        .screen.active { display: flex; }
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(20, 20, 35, 0.9); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); }
-        .nav-item { flex: 1; background: none; border: none; color: #64748b; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .nav-item.active { color: #f5b041; text-shadow: 0 0 15px rgba(245, 176, 65, 0.6); }
-        
-        #coins-text { font-size: 44px; font-weight: bold; margin-bottom: 40px; background: linear-gradient(135deg, #ffe066 0%, #f5b041 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 15px rgba(245, 176, 65, 0.3)); }
-        
-        /* КНОПКА-КРОЛИК ВМЕСТО МОНЕТЫ */
-        .coin-wrapper { position: relative; filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5)); }
-        .coin { 
-            width: 230px; 
-            height: 230px; 
-            background: #f5b041; 
-            border-radius: 50%; 
-            border: 6px solid #d4ac0d; 
-            box-shadow: inset 0 5px 10px rgba(255,255,255,0.6), inset 0 -10px 20px rgba(0,0,0,0.4); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 95px; 
-            cursor: pointer; 
-            transition: transform 0.05s ease; 
-        }
-        .coin:active { transform: scale(0.93); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Neon Bunny Clicker</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
 
-        .prize-preview { display: flex; gap: 8px; margin-bottom: 30px; justify-content: center; background: rgba(255, 255, 255, 0.03); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .prize-badge { padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .wheel-box { position: relative; margin: 10px auto; width: 260px; height: 260px; }
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 24px solid #ff3838; z-index: 10; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
-        .wheel { width: 260px; height: 260px; border-radius: 50%; border: 8px solid #1e1e2f; background: conic-gradient(#ff4757 0deg 90deg, #2e86de 90deg 180deg, #2ed573 180deg 270deg, #ffa502 270deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.5); }
-        .wheel-icon { position: absolute; font-size: 34px; width: 40px; height: 40px; top: 110px; left: 110px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7)); }
-        .wi-1 { transform: rotate(45deg) translateY(-75px) rotate(-45deg); }
-        .wi-2 { transform: rotate(135deg) translateY(-75px) rotate(-135deg); }
-        .wi-3 { transform: rotate(225deg) translateY(-75px) rotate(-225deg); }
-        .wi-4 { transform: rotate(315deg) translateY(-75px) rotate(-315deg); }
-        .wheel-center { position: absolute; width: 46px; height: 46px; background: #fff; border-radius: 50%; top: 107px; left: 107px; z-index: 5; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .btn-spin { background: linear-gradient(135deg, #2ed573, #26af5f); color: #fff; border: none; padding: 14px 40px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; margin-top: 25px; box-shadow: 0 6px 20px rgba(46,213,115,0.4); transition: all 0.2s ease; letter-spacing: 0.5px; }
-        .btn-spin:active { transform: scale(0.97); }
-        .btn-spin:disabled { background: #334155 !important; box-shadow: none; color: #64748b; cursor: not-allowed; }
-        #timer-box { margin-top: 15px; font-size: 14px; color: #94a3b8; font-weight: 500; }
-    </style>
+    .screen {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        padding: 20px 20px 100px;
+    }
+    .screen.active { display: flex; }
+
+    /* Навигация */
+    .nav-bar {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 75px;
+        background: rgba(20, 20, 35, 0.95);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+    }
+    .nav-item {
+        flex: 1;
+        background: none;
+        border: none;
+        color: #64748b;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .nav-item.active {
+        color: #f5b041;
+        text-shadow: 0 0 15px rgba(245, 176, 65, 0.6);
+    }
+
+    /* Кликер */
+    #coins-text {
+        font-size: 44px;
+        font-weight: bold;
+        margin-bottom: 40px;
+        background: linear-gradient(135deg, #ffe066 0%, #f5b041 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 4px 15px rgba(245, 176, 65, 0.3));
+        text-align: center;
+    }
+
+    .coin-wrapper {
+        position: relative;
+        filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
+    }
+    .coin {
+        width: 230px;
+        height: 230px;
+        background: #f5b041;
+        border-radius: 50%;
+        border: 6px solid #d4ac0d;
+        box-shadow: inset 0 5px 10px rgba(255,255,255,0.6), inset 0 -10px 20px rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 95px;
+        cursor: pointer;
+        transition: transform 0.05s ease;
+    }
+    .coin:active { transform: scale(0.93); }
+
+    #boost-indicator {
+        margin-top: 25px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #2ed573;
+        text-shadow: 0 0 10px rgba(46, 213, 115, 0.6);
+        min-height: 20px;
+    }
+
+    /* Рулетка */
+    .roulette-title {
+        margin: 0 0 8px;
+        font-size: 28px;
+    }
+
+    .prize-preview {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 25px;
+        justify-content: center;
+        flex-wrap: wrap;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 8px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .prize-badge {
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .wheel-box {
+        position: relative;
+        margin: 10px auto;
+        width: 260px;
+        height: 260px;
+    }
+    .pointer {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0; height: 0;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-top: 24px solid #ff3838;
+        z-index: 10;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    }
+    .wheel {
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        border: 8px solid #1e1e2f;
+        background: conic-gradient(
+            #ff4757 0deg 90deg,
+            #2e86de 90deg 180deg,
+            #2ed573 180deg 270deg,
+            #ffa502 270deg 360deg
+        );
+        transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
+        position: relative;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.5);
+    }
+    .wheel-icon {
+        position: absolute;
+        font-size: 34px;
+        width: 40px; height: 40px;
+        top: 110px; left: 110px;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7));
+    }
+    .wi-1 { transform: rotate(45deg) translateY(-75px) rotate(-45deg); }
+    .wi-2 { transform: rotate(135deg) translateY(-75px) rotate(-135deg); }
+    .wi-3 { transform: rotate(225deg) translateY(-75px) rotate(-225deg); }
+    .wi-4 { transform: rotate(315deg) translateY(-75px) rotate(-315deg); }
+    .wheel-center {
+        position: absolute;
+        width: 46px; height: 46px;
+        background: #fff;
+        border-radius: 50%;
+        top: 107px; left: 107px;
+        z-index: 5;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .btn-spin {
+        background: linear-gradient(135deg, #2ed573, #26af5f);
+        color: #fff;
+        border: none;
+        padding: 14px 40px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 30px;
+        cursor: pointer;
+        margin-top: 25px;
+        box-shadow: 0 6px 20px rgba(46,213,115,0.4);
+        transition: all 0.2s ease;
+        letter-spacing: 0.5px;
+    }
+    .btn-spin:active:not(:disabled) { transform: scale(0.97); }
+    .btn-spin:disabled {
+        background: #334155 !important;
+        box-shadow: none;
+        color: #64748b;
+        cursor: not-allowed;
+    }
+    #timer-box {
+        margin-top: 15px;
+        font-size: 14px;
+        color: #94a3b8;
+        font-weight: 500;
+        min-height: 20px;
+    }
+
+    /* Тост-уведомление */
+    #toast {
+        position: fixed;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-120px);
+        background: rgba(30, 30, 50, 0.95);
+        border: 1px solid rgba(245, 176, 65, 0.5);
+        color: #fff;
+        padding: 14px 22px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: bold;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(245, 176, 65, 0.3);
+        z-index: 200;
+        transition: transform 0.4s cubic-bezier(0.2, 1.2, 0.4, 1), opacity 0.3s ease;
+        opacity: 0;
+        max-width: 90vw;
+        text-align: center;
+    }
+    #toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+</style>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: КЛИКЕР -->
-    <div id="screen-clicker" class="screen active">
-        <div id="coins-text">Монеты: 0</div>
-        <div class="coin-wrapper">
-            <!-- Эмодзи вислоухого кролика на кнопке -->
-            <div class="coin" id="coin-btn">🐰</div>
+<!-- ЭКРАН 1: КЛИКЕР -->
+<div id="screen-clicker" class="screen active">
+    <div id="coins-text">Монеты: 0</div>
+    <div class="coin-wrapper">
+        <div class="coin" id="coin-btn">🐰</div>
+    </div>
+    <div id="boost-indicator"></div>
+</div>
+
+<!-- ЭКРАН 2: РУЛЕТКА -->
+<div id="screen-roulette" class="screen">
+    <h2 class="roulette-title">Колесо Удачи</h2>
+
+    <div class="prize-preview">
+        <span class="prize-badge" style="background:#ff4757;">🔴 +500</span>
+        <span class="prize-badge" style="background:#2e86de;">🔵 Буст x2</span>
+        <span class="prize-badge" style="background:#2ed573;">🟢 +2500</span>
+        <span class="prize-badge" style="background:#ffa502;">🟡 Скин 👑</span>
+    </div>
+
+    <div class="wheel-box">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel-element">
+            <div class="wheel-icon wi-1">💰</div>
+            <div class="wheel-icon wi-2">⚡️</div>
+            <div class="wheel-icon wi-3">💎</div>
+            <div class="wheel-icon wi-4">👑</div>
+            <div class="wheel-center">🎁</div>
         </div>
     </div>
 
-    <!-- ЭКРАН 2: РУЛЕТКА -->
-    <div id="screen-roulette" class="screen">
-        <h2 style="margin-top:0; margin-bottom:8px; font-size:28px;">Колесо Удачи</h2>
-        
-        <div class="prize-preview">
-            <span class="prize-badge" style="background:#ff4757;">🔴 +500</span>
-            <span class="prize-badge" style="background:#2e86de;">🔵 Буст x2</span>
-            <span class="prize-badge" style="background:#2ed573;">🟢 +2500</span>
-            <span class="prize-badge" style="background:#ffa502;">🟡 Скин 👑</span>
-        </div>
+    <button class="btn-spin" id="spin-btn">КРУТИТЬ БЕСПЛАТНО</button>
+    <div id="timer-box"></div>
+</div>
 
-        <div class="wheel-box">
-            <div class="pointer"></div>
-            <div class="wheel" id="wheel-element">
-                <div class="wheel-icon wi-1">💰</div>
-                <div class="wheel-icon wi-2">⚡</div>
-                <div class="wheel-icon wi-3">💎</div>
-                <div class="wheel-icon wi-4">👑</div>
-                <div class="wheel-center">🎁</div>
-            </div>
-        </div>
+<!-- НАВИГАЦИЯ -->
+<div class="nav-bar">
+    <button id="tab-clicker" class="nav-item active" data-tab="clicker">Кликер</button>
+    <button id="tab-roulette" class="nav-item" data-tab="roulette">Рулетка</button>
+</div>
 
-        <button class="btn-spin" id="spin-free" onclick="startSpin()">КРУТИТЬ БЕСПЛАТНО</button>
-        <div id="timer-box"></div>
-    </div>
+<!-- ТОСТ -->
+<div id="toast"></div>
 
-    <!-- НАВИГАЦИЯ -->
-    <div class="nav-bar">
-        <button id="tab-clicker" class="nav-item active" onclick="goTab('clicker')">Кликер</button>
-        <button id="tab-roulette" class="nav-item" onclick="goTab('roulette')">Рулетка</button>
-    </div>
+<script>
+(function () {
+    'use strict';
 
-    <script>
-        let coins = parseInt(localStorage.getItem('coins')) || 0;
-        let activeSkin = localStorage.getItem('activeSkin') || '🐰'; // Стартовый скин теперь кролик
-        let clickMultiplier = 1;
-        let spinning = false;
+    // ====== КОНСТАНТЫ ======
+    const STORAGE_KEYS = {
+        coins: 'nb_coins',
+        skin: 'nb_skin',
+        cooldown: 'nb_cooldown',
+        boostUntil: 'nb_boost_until'
+    };
+    const SPIN_COOLDOWN_MS = 24 * 60 * 60 * 1000;   // 24 часа
+    const BOOST_DURATION_MS = 3 * 60 * 1000;        // 3 минуты
+    const BOOST_MULTIPLIER = 2;
+    const SPIN_DURATION_MS = 4100;                  // длительность анимации
 
-        const scoreView = document.getElementById('coins-text');
-        const coinBtn = document.getElementById('coin-btn');
-        const wheelEl = document.getElementById('wheel-element');
+    // Сектора колеса (по часовой стрелке от верхней точки)
+    // Каждому сектору — свой приз и его победная зона
+    const PRIZES = [
+        { id: 'coins500',  color: '#ff4757', label: '🔴 +500',        sector: 0   },  // 0°–90°
+        { id: 'boost',     color: '#2e86de', label: '🔵 Буст x2',     sector: 90  },  // 90°–180°
+        { id: 'coins2500', color: '#2ed573', label: '🟢 +2500',       sector: 180 },  // 180°–270°
+        { id: 'skin',      color: '#ffa502', label: '🟡 Скин 👑',     sector: 270 }   // 270°–360°
+    ];
 
-        scoreView.innerText = 'Монеты: ' + coins;
-        coinBtn.innerText = activeSkin;
-
-        function goTab(name) {
-            if (spinning) return;
-            document.getElementById('screen-clicker').classList.remove('active');
-            document.getElementById('screen-roulette').classList.remove('active');
-            document.getElementById('tab-clicker').classList.remove('active');
-            document.getElementById('tab-roulette').classList.remove('active');
-
-            if (name === 'clicker') {
-                document.getElementById('screen-clicker').classList.add('active');
-                document.getElementById('tab-clicker').classList.add('active');
-                scoreView.innerText = 'Монеты: ' + coins;
-            } else {
-                document.getElementById('screen-roulette').classList.add('active');
-                document.getElementById('tab-roulette').classList.add('active');
-                checkTimer();
-            }
+    // ====== DOM ======
+    const $ = (id) => document.getElementById(id);
+    const el = {
+        coinsText:   $('coins-text'),
+        coinBtn:     $('coin-btn'),
+        boostInd:    $('boost-indicator'),
+        wheel:       $('wheel-element'),
+        spinBtn:     $('spin-btn'),
+        timerBox:    $('timer-box'),
+        toast:       $('toast'),
+        screens: {
+            clicker:  $('screen-clicker'),
+            roulette: $('screen-roulette')
+        },
+        tabs: {
+            clicker:  $('tab-clicker'),
+            roulette: $('tab-roulette')
         }
+    };
 
-        function handleTap(e) {
-            coins += (1 * clickMultiplier);
-            scoreView.innerText = 'Монеты: ' + coins;
-            localStorage.setItem('coins', coins);
+    // ====== СОСТОЯНИЕ ======
+    const state = {
+        coins:        parseInt(localStorage.getItem(STORAGE_KEYS.coins), 10) || 0,
+        skin:         localStorage.getItem(STORAGE_KEYS.skin) || '🐰',
+        cooldownEnd:  parseInt(localStorage.getItem(STORAGE_KEYS.cooldown), 10) || 0,
+        boostUntil:   parseInt(localStorage.getItem(STORAGE_KEYS.boostUntil), 10) || 0,
+        spinning:     false
+    };
+
+    // ====== УТИЛИТЫ ======
+    function save() {
+        localStorage.setItem(STORAGE_KEYS.coins, state.coins);
+        localStorage.setItem(STORAGE_KEYS.skin, state.skin);
+        localStorage.setItem(STORAGE_KEYS.cooldown, state.cooldownEnd);
+        localStorage.setItem(STORAGE_KEYS.boostUntil, state.boostUntil);
+    }
+
+    function isBoostActive() {
+        return Date.now() < state.boostUntil;
+    }
+
+    function getMultiplier() {
+        return isBoostActive() ? BOOST_MULTIPLIER : 1;
+    }
+
+    let toastTimer = null;
+    function showToast(message) {
+        el.toast.textContent = message;
+        el.toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.toast.classList.remove('show'), 2500);
+    }
+
+    function formatTime(ms) {
+        const total = Math.max(0, Math.floor(ms / 1000));
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+        return `${h}ч ${m}м ${s}с`;
+    }
+
+    // ====== РЕНДЕР ======
+    function renderCoins() {
+        el.coinsText.textContent = 'Монеты: ' + state.coins;
+    }
+
+    function renderSkin() {
+        el.coinBtn.textContent = state.skin;
+    }
+
+    function renderBoostIndicator() {
+        if (isBoostActive()) {
+            el.boostInd.textContent = '⚡ Буст x' + BOOST_MULTIPLIER +
+                ' · ' + formatTime(state.boostUntil - Date.now());
+        } else {
+            el.boostInd.textContent = '';
         }
+    }
 
-        coinBtn.addEventListener('mousedown', handleTap);
-        coinBtn.addEventListener('touchstart', function(e) { e.preventDefault(); handleTap(e); }, { passive: false });
-
-        function startSpin() {
-            if (spinning) return;
-            spinning = true;
-            document.getElementById('spin-free').disabled = true;
-            
-            let degrees = Math.floor(Math.random() * 360) + 2160;
-            wheelEl.style.transform = 'rotate(' + degrees + 'deg)';
-
-            setTimeout(function() {
-                spinning = false;
-                let sector = (360 - (degrees % 360)) % 360;
-
-                if (sector >= 0 && sector < 90) { coins += 500; alert("Приз: Вы выиграли +500 монет!"); }
-                else if (sector >= 90 && sector < 180) { activeSkin = '👑'; localStorage.setItem('activeSkin', '👑'); coinBtn.innerText = '👑'; alert("Ура! Выпал скин Короны 👑!"); }
-                else if (sector >= 180 && sector < 270) { coins += 2500; alert("Приз: Вы выиграли +2500 монет!"); }
-                else { clickMultiplier = 2; alert("Буст активирован! Клик дает x2 монет на 3 минуты!"); setTimeout(() => clickMultiplier = 1, 180000); }
-
-                localStorage.setItem('coins', coins);
-                localStorage.setItem('spinCooldowTime', Date.now() + 86400000);
-                checkTimer();
-            }, 4100);
+    function renderSpinButton() {
+        if (state.spinning) {
+            el.spinBtn.disabled = true;
+            return;
         }
+        const ready = Date.now() >= state.cooldownEnd;
+        el.spinBtn.disabled = !ready;
+        if (ready) {
+            el.timerBox.textContent = 'Бесплатная рулетка готова!';
+        } else {
+            el.timerBox.textContent = 'Доступно через: ' + formatTime(state.cooldownEnd - Date.now());
+        }
+    }
 
-        function checkTimer() {
-            const btn = document.getElementById('spin-free');
-            const timerBox = document.getElementById('timer-box');
-            let cooldown = parseInt(localStorage.getItem('spinCooldowTime')) || 0;
+    // ====== НАВИГАЦИЯ ======
+    function goTab(name) {
+        if (state.spinning) return;
+        Object.keys(el.screens).forEach((key) => {
+            el.screens[key].classList.toggle('active', key === name);
+            el.tabs[key].classList.toggle('active', key === name);
+        });
+        if (name === 'roulette') renderSpinButton();
+    }
 
-            if (spinning) return;
+    el.tabs.clicker.addEventListener('click', () => goTab('clicker'));
+    el.tabs.roulette.addEventListener('click', () => goTab('roulette'));
 
-            if (Date.now() >= cooldown) {
-                btn.disabled = false;
-                timerBox.innerText = "Бесплатная рулетка готова!";
-            } else {
-                btn.disabled = true;
-                let rest = cooldown - Date.now();
-                let h = Math.floor(rest / 3600000);
-                let m = Math.floor((rest % 3600000) / 60000);
-                let s = Math.floor((rest % 60000) / 1000);
-timerBox.innerText = "Доступно через: " + h + "ч " + m + "м " + s + "с";
-setTimeout(checkTimer, 1000);
-}
-}
+    // ====== КЛИКЕР ======
+    function handleTap(e) {
+        if (e) e.preventDefault();
+        state.coins += getMultiplier();
+        save();
+        renderCoins();
+        // небольшой визуальный отклик при тапе
+        el.coinBtn.style.transform = 'scale(0.93)';
+        setTimeout(() => { el.coinBtn.style.transform = ''; }, 60);
+    }
+
+    el.coinBtn.addEventListener('mousedown', handleTap);
+    el.coinBtn.addEventListener('touchstart', handleTap, { passive: false });
+
+    // ====== РУЛЕТКА ======
+    function startSpin() {
+        if (state.spinning) return;
+        if (Date.now() < state.cooldownEnd) return;
+
+        state.spinning = true;
+        renderSpinButton();
+
+        // Случайный угол: минимум 5 полных оборотов + случайная позиция
+        const spins = 5;
+        const randomAngle = Math.random() * 360;
+        const totalDegrees = spins * 360 + randomAngle;
+
+        el.wheel.style.transition = `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.1, 0.8, 0.1, 1)`;
+        el.wheel.style.transform = 'rotate(' + totalDegrees + 'deg)';
+
+        setTimeout(() => {
+            state.spinning = false;
+            // Верхняя точка указателя: определяем сектор, который оказался наверху
+            // Угол поворота колеса: totalDegrees. Сектор под указателем:
+            const normalized = ((360 - (totalDegrees % 360)) + 360) % 360;
+            const prizeIndex = Math.floor(normalized / 90); // 0..3
+            const prize = PRIZES[prizeIndex];
+
+            applyPrize(prize);
+
+            state.cooldownEnd = Date.now() + SPIN_COOLDOWN_MS;
+            save();
+            renderSpinButton();
+        }, SPIN_DURATION_MS + 50);
+    }
+
+    function applyPrize(prize) {
+        switch (prize.id) {
+            case 'coins500':
+                state.coins += 500;
+                showToast('💰 Вы выиграли +500 монет!');
+                break;
+            case 'coins2500':
+                state.coins += 2500;
+                showToast('💎 Вы выиграли +2500 монет!');
+                break;
+            case 'boost':
+                state.boostUntil = Date.now() + BOOST_DURATION_MS;
+                showToast('⚡ Буст x2 активирован на 3 минуты!');
+                break;
+            case 'skin':
+                state.skin = '👑';
+                renderSkin();
+                showToast('👑 Ура! Выпал скин Короны!');
+                break;
+        }
+        save();
+        renderCoins();
+        renderBoostIndicator();
+    }
+
+    el.spinBtn.addEventListener('click', startSpin);
+
+    // ====== ТИКЕР (единый интервал, а не рекурсивный setTimeout) ======
+    setInterval(() => {
+        if (isBoostActive()) {
+            renderBoostIndicator();
+        } else if (el.boostInd.textContent !== '') {
+            renderBoostIndicator();
+        }
+        // Обновляем таймер кнопки, только когда рулетка открыта
+        if (el.screens.roulette.classList.contains('active') && !state.spinning) {
+            renderSpinButton();
+        }
+    }, 1000);
+
+    // ====== ИНИЦИАЛИЗАЦИЯ ======
+    function init() {
+        renderCoins();
+        renderSkin();
+        renderBoostIndicator();
+        renderSpinButton();
+    }
+
+    init();
+})();
+</script>
+</body>
+</html>
