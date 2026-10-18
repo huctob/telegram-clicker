@@ -3,43 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Clicker App</title>
+    <title>Neon Clicker App</title>
     <style>
-        body { background: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
-        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding-bottom: 70px; }
+        body { 
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%); 
+            color: #fff; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; padding: 0; 
+            overflow: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            user-select: none; 
+            -webkit-user-select: none; 
+        }
+        
+        .screen { 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            flex: 1; 
+            padding-bottom: 80px; 
+            animation: fadeIn 0.3s ease;
+        }
+        
         .screen.active { display: flex; }
         
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #191919; border-top: 2px solid #333; display: flex; }
-        .nav-item { flex: 1; background: none; border: none; color: #888; font-size: 16px; cursor: pointer; }
-        .nav-item.active { color: #f5b041; font-weight: bold; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
         
-        #coins-text { font-size: 40px; margin-bottom: 30px; }
-        .coin { width: 200px; height: 200px; background: #f5b041; border-radius: 50%; box-shadow: 0 10px 0 #935116; display: flex; align-items: center; justify-content: center; font-size: 70px; cursor: pointer; margin: 0 auto; }
-        .coin:active { transform: translateY(5px); box-shadow: 0 5px 0 #935116; }
+        /* НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ */
+        .nav-bar { 
+            position: fixed; 
+            bottom: 0; left: 0; right: 0; 
+            height: 75px; 
+            background: rgba(20, 20, 35, 0.85); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            display: flex; 
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+        }
         
-        /* КАРТОЧКИ ПРИЗОВ */
-        .prize-preview { display: flex; gap: 8px; margin-bottom: 25px; justify-content: center; }
-        .prize-badge { padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .nav-item { 
+            flex: 1; 
+            background: none; border: none; 
+            color: #64748b; 
+            font-size: 14px; 
+            font-weight: 600;
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
         
-        /* ОБНОВЛЕННАЯ РУЛЕТКА С ИКОНКАМИ */
-        .wheel-box { position: relative; margin: 20px auto; width: 260px; height: 260px; }
-        .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ff3333; z-index: 10; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+        .nav-item.active { 
+            color: #f5b041; 
+            text-shadow: 0 0 15px rgba(245, 176, 65, 0.6);
+        }
         
-        .wheel { width: 260px; height: 260px; border-radius: 50%; border: 8px solid #222; background: conic-gradient(#e74c3c 0deg 90deg, #3498db 90deg 180deg, #2ecc71 180deg 270deg, #f1c40f 270deg 360deg); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.4); }
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
         
-        /* Иконки внутри секторов рулетки */
-        .wheel-icon { position: absolute; font-size: 32px; width: 40px; height: 40px; top: 110px; left: 110px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+        /* СТИЛЬ ИНТЕРФЕЙСА КЛИКЕРА */
+        #coins-text { 
+            font-size: 44px; 
+            font-weight: 800;
+            margin-bottom: 40px; 
+            background: linear-gradient(135deg, #ffe066 0%, #f5b041 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 15px rgba(245, 176, 65, 0.3));
+        }
+        
+        .coin-wrapper {
+            position: relative;
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+        }
+        
+        .coin { 
+            width: 220px; height: 220px; 
+            background: radial-gradient(circle at 35% 35%, #fff79a 0%, #f4d03f 60%, #b7950b 100%); 
+            border-radius: 50%; 
+            border: 6px solid #d4ac0d;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.6), inset 0 -10px 20px rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 85px; 
+            cursor: pointer; 
+            transition: transform 0.05s ease;
+        }
+        
+        .coin:active { 
+            transform: scale(0.94); 
+        }
+        
+        /* СТИЛЬНЫЕ БАДЖИ ПРИЗОВ */
+        .prize-preview { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 30px; 
+            justify-content: center; 
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .prize-badge { 
+            padding: 6px 10px; 
+            border-radius: 8px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* ОБНОВЛЕННОЕ КОЛЕСО */
+        .wheel-box { 
+            position: relative; 
+            margin: 10px auto; 
+            width: 260px; height: 260px; 
+        }
+        
+        .pointer { 
+            position: absolute; 
+            top: -15px; left: 50%; 
+            transform: translateX(-50%); 
+            width: 0; height: 0; 
+            border-left: 14px solid transparent; 
+            border-right: 14px solid transparent; 
+            border-top: 24px solid #ff3838; 
+            z-index: 10; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); 
+        }
+        
+        .wheel { 
+            width: 260px; height: 260px; 
+            border-radius: 50%; 
+            border: 8px solid #1e1e2f; 
+            background: conic-gradient(#ff4757 0deg 90deg, #2e86de 90deg 180deg, #2ed573 180deg 270deg, #ffa502 270deg 360deg); 
+            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); 
+            position: relative; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.5); 
+        }
+        
+        .wheel-icon { 
+            position: absolute; 
+            font-size: 34px; 
+            width: 40px; height: 40px; 
+            top: 110px; left: 110px; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7)); 
+        }
+        
         .wi-1 { transform: rotate(45deg) translateY(-75px) rotate(-45deg); }
         .wi-2 { transform: rotate(135deg) translateY(-75px) rotate(-135deg); }
         .wi-3 { transform: rotate(225deg) translateY(-75px) rotate(-225deg); }
         .wi-4 { transform: rotate(315deg) translateY(-75px) rotate(-315deg); }
 
-        .wheel-center { position: absolute; width: 40px; height: 40px; background: #fff; border-radius: 50%; top: 110px; left: 110px; z-index: 5; box-shadow: 0 0 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .wheel-center { 
+            position: absolute; 
+            width: 46px; height: 46px; 
+            background: #fff; 
+            border-radius: 50%; 
+            top: 107px; left: 107px; 
+            z-index: 5; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 20px; 
+        }
         
-        /* СТИЛЬНЫЕ КНОПКИ */
-        .btn-spin { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; border: none; padding: 12px 35px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; margin-top: 15px; box-shadow: 0 5px 15px rgba(46,204,113,0.3); transition: 0.1s; }
-        .btn-spin:active { transform: scale(0.98); }
-        .btn-spin:disabled { background: #444 !important; box-shadow: none; color: #888; }
+        /* КНОПКА КРУТИТЬ */
+        .btn-spin { 
+            background: linear-gradient(135deg, #2ed573, #26af5f); 
+            color: #fff; 
+            border: none; 
+            padding: 14px 40px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            margin-top: 25px; 
+            box-shadow: 0 6px 20px rgba(46,213,115,0.4); 
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-spin:active { transform: scale(0.97); box-shadow: 0 3px 10px rgba(46,213,115,0.2); }
+        .btn-spin:disabled { background: #334155 !important; box-shadow: none; color: #64748b; cursor: not-allowed; }
+        
+        #timer-box { margin-top: 15px; font-size: 14px; color: #94a3b8; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -47,24 +208,25 @@
     <!-- ЭКРАН 1: КЛИКЕР -->
     <div id="screen-clicker" class="screen active">
         <div id="coins-text">Монеты: 0</div>
-        <div class="coin" id="coin-btn">⭐</div>
+        <div class="coin-wrapper">
+            <div class="coin" id="coin-btn">⭐</div>
+        </div>
     </div>
 
     <!-- ЭКРАН 2: РУЛЕТКА -->
     <div id="screen-roulette" class="screen">
-        <h2 style="margin-bottom: 5px;">Колесо Удачи</h2>
+        <h2 style="margin-top: 0; margin-bottom: 8px; font-size: 28px; letter-spacing: 0.5px;">Колесо Удачи</h2>
         
         <div class="prize-preview">
-            <span class="prize-badge" style="background:#e74c3c;">🔴 +500</span>
-            <span class="prize-badge" style="background:#3498db;">🔵 Буст x2</span>
-            <span class="prize-badge" style="background:#2ecc71;">🟢 +2500</span>
-            <span class="prize-badge" style="background:#f1c40f;">🟡 Скин 👑</span>
+            <span class="prize-badge" style="background:#ff4757;">🔴 +500</span>
+            <span class="prize-badge" style="background:#2e86de;">🔵 Буст x2</span>
+            <span class="prize-badge" style="background:#2ed573;">🟢 +2500</span>
+            <span class="prize-badge" style="background:#ffa502;">🟡 Скин 👑</span>
         </div>
 
         <div class="wheel-box">
             <div class="pointer"></div>
             <div class="wheel" id="wheel-element">
-                <!-- Расставляем иконки призов по секторам -->
                 <div class="wheel-icon wi-1">💰</div>
                 <div class="wheel-icon wi-2">⚡</div>
                 <div class="wheel-icon wi-3">💎</div>
@@ -73,19 +235,20 @@
             </div>
         </div>
 
-        <button class="btn-spin" id="spin-free" onclick="startSpin()">Бесплатно</button>
-        
-        <button class="btn-spin" id="spin-stars" onclick="startStarsSpin()" style="background: linear-gradient(135deg, #0088cc, #005580); box-shadow: 0 5px 15px rgba(0,136,204,0.3); margin-top: 10px;">
-            Крутить за ⭐ 5 Звезд
-        </button>
-
-        <div id="timer-box" style="margin-top: 12px; font-size: 14px; color: #aaa;"></div>
+        <button class="btn-spin" id="spin-free" onclick="startSpin()">КРУТИТЬ БЕСПЛАТНО</button>
+        <div id="timer-box"></div>
     </div>
 
-    <!-- МЕНЮ -->
+    <!-- МЕНЮ НАВИГАЦИИ -->
     <div class="nav-bar">
-        <button id="tab-clicker" class="nav-item active" onclick="goTab('clicker')">🎯 Кликер</button>
-        <button id="tab-roulette" class="nav-item" onclick="goTab('roulette')">🎡 Рулетка</button>
+        <button id="tab-clicker" class="nav-item active" onclick="goTab('clicker')">
+            <span class="nav-icon">🎯</span>
+            <span>Кликер</span>
+        </button>
+        <button id="tab-roulette" class="nav-item" onclick="goTab('roulette')">
+            <span class="nav-icon">🎡</span>
+            <span>Рулетка</span>
+        </button>
     </div>
 
     <script>
@@ -113,69 +276,45 @@
                 document.getElementById('tab-clicker').classList.add('active');
                 scoreView.innerText = 'Монеты: ' + coins;
             } else {
-                document.getElementById('screen-roulette').classList.add('active');
-                document.getElementById('tab-roulette').classList.add('active');
-                checkTimer();
-            }
-        }
-
-        function handleTap(e) {
-            coins += (1 * clickMultiplier);
-            scoreView.innerText = 'Монеты: ' + coins;
-            localStorage.setItem('coins', coins);
-        }
-
-        coinBtn.addEventListener('mousedown', handleTap);
-        coinBtn.addEventListener('touchstart', function(e) { e.preventDefault(); handleTap(e); }, { passive: false });
-
-        function startSpin() {
-            if (spinning) return;
-            spinning = true;
-            document.getElementById('spin-free').disabled = true;
-            document.getElementById('spin-stars').disabled = true;
-            
-            let degrees = Math.floor(Math.random() * 360) + 1800;
-            wheelEl.style.transform = 'rotate(' + degrees + 'deg)';
-
-            setTimeout(function() {
-                spinning = false;
-                document.getElementById('spin-stars').disabled = false;
-                let sector = (360 - (degrees % 360)) % 360;
-
-                if (sector >= 0 && sector < 90) { coins += 500; alert("Вы выиграли 500 монет!"); }
-                else if (sector >= 90 && sector < 180) { activeSkin = '👑'; localStorage.setItem('activeSkin', '👑'); coinBtn.innerText = '👑'; alert("Выпал скин Короны 👑!"); }
-                else if (sector >= 180 && sector < 270) { coins += 2500; alert("Вы выиграли 2500 монет!"); }
-                else { clickMultiplier = 2; alert("Буст x2 активирован на 3 минуты!"); setTimeout(() => clickMultiplier = 1, 180000); }
-
-                localStorage.setItem('coins', coins);
-                localStorage.setItem('spinCooldowTime', Date.now() + 86400000);
-                checkTimer();
-            }, 4100);
-        }
-
-        function startStarsSpin() {
-            if (spinning) return;
-            let payConfirm = confirm("Купить платную прокрутку за ⭐ 5 Звезд Telegram?");
-            if (!payConfirm) return;
-
-            spinning = true;
-            document.getElementById('spin-stars').disabled = true;
-            document.getElementById('spin-free').disabled = true;
-            
-            let degrees = Math.floor(Math.random() * 360) + 1800;
-            wheelEl.style.transform = 'rotate(' + degrees + 'deg)';
-
-            setTimeout(function() {
-                spinning = false;
-                document.getElementById('spin-stars').disabled = false;
-                let sector = (360 - (degrees % 360)) % 360;
-
-                if (sector >= 0 && sector < 90) { coins += 5000; alert("🔥 ЗВЕЗДНЫЙ ПРИЗ! Вы выиграли +5,000 монет!"); }
-                else if (sector >= 90 && sector < 180) { activeSkin = '👑'; localStorage.setItem('activeSkin', '👑'); coinBtn.innerText = '👑'; alert("Выпал скин Короны 👑!"); }
-                else if (sector >= 180 && sector < 270) { coins += 15000; alert("💎 МЕГА-КУШ! Вы выиграли +15,000 монет!"); }
-                else { clickMultiplier = 5; alert("💥 СУПЕР БУСТ! Клик дает x5 монет на 5 минут!"); setTimeout(() => clickMultiplier = 1, 300000); }
-
-                localStorage.setItem('coins', coins);
+document.getElementById('screen-roulette').classList.add('active');
+document.getElementById('tab-roulette').classList.add('active');
+checkTimer();
+}
+}
+function handleTap(e) {
+coins += (1 * clickMultiplier);
+scoreView.innerText = 'Монеты: ' + coins;
+localStorage.setItem('coins', coins);
+}
+coinBtn.addEventListener('mousedown', handleTap);
+coinBtn.addEventListener('touchstart', function(e) { e.preventDefault(); handleTap(e); }, { passive: false });
+function startSpin() {
+if (spinning) return;
+spinning = true;
+document.getElementById('spin-free').disabled = true;
+let degrees = Math.floor(Math.random() * 360) + 2160; // 6 полных оборотов
+wheelEl.style.transform = 'rotate(' + degrees + 'deg)';
+setTimeout(function() {
+spinning = false;
+let sector = (360 - (degrees % 360)) % 360;
+if (sector >= 0 && sector < 90) {
+coins += 500;
+alert("Приз: Вы выиграли +500 монет!");
+} else if (sector >= 90 && sector < 180) {
+activeSkin = '👑';
+localStorage.setItem('activeSkin', '👑');
+coinBtn.innerText = '👑';
+alert("Ура! Выпал скин Короны 👑!");
+} else if (sector >= 180 && sector < 270) {
+coins += 2500;
+alert("Приз: Вы выиграли +2500 монет!");
+} else {
+clickMultiplier = 2;
+alert("Буст активирован! Клик дает x2 монет на 3 минуты!");
+setTimeout(() => clickMultiplier = 1, 180000);
+}
+localStorage.setItem('coins', coins);
+localStorage.setItem('spinCooldowTime', Date.now() + 86400000);
 checkTimer();
 }, 4100);
 }
@@ -186,7 +325,7 @@ let cooldown = parseInt(localStorage.getItem('spinCooldowTime')) || 0;
 if (spinning) return;
 if (Date.now() >= cooldown) {
 btn.disabled = false;
-timerBox.innerText = "Рулетка доступна!";
+timerBox.innerText = "Бесплатная рулетка готова!";
 } else {
 btn.disabled = true;
 let rest = cooldown - Date.now();
@@ -195,4 +334,5 @@ let m = Math.floor((rest % 3600000) / 60000);
 let s = Math.floor((rest % 60000) / 1000);
 timerBox.innerText = "Доступно через: " + h + "ч " + m + "м " + s + "с";
 setTimeout(checkTimer, 1000);
+}
 }
