@@ -6,9 +6,9 @@
     <title>Кликер</title>
     <style>
         body {
-            background-color: #1a1a1a;
+            background: linear-gradient(135deg, #121212 0%, #1c1c1c 100%);
             color: #ffffff;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -17,38 +17,89 @@
             margin: 0;
             overflow: hidden;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         #coins-text {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 30px;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+            letter-spacing: 1px;
         }
 
-        /* Стиль монетки */
+        /* 3D МОДЕЛЬКА МОНЕТКИ */
+        .coin-container {
+            position: relative;
+            perspective: 1000px;
+        }
+
         .coin {
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, #ffdf00 0%, #d4af37 100%);
+            width: 240px;
+            height: 240px;
+            background: linear-gradient(135deg, #ffe066 0%, #f5b041 50%, #c0392b 100%);
             border-radius: 50%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 -8px 0 #b8860b, inset 0 8px 0 #fff79a;
+            position: relative;
             cursor: pointer;
-            transition: transform 0.05s ease; /* Очень быстрый возврат формы */
+            box-shadow: 
+                0 15px 0 #935116, /* Толщина монеты (3D рант) */
+                0 20px 30px rgba(0, 0, 0, 0.6); /* Внешняя тень */
+            transition: transform 0.05s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 8px solid #b8860b;
         }
 
-        /* Знак внутри монетки */
+        /* Внутреннее тиснение и блеск монеты */
+        .coin::before {
+            content: "";
+            position: absolute;
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border-radius: 50%;
+            border: 4px dashed #b7950b;
+            background: radial-gradient(circle at 35% 35%, #fff79a 0%, #f4d03f 70%, #d4ac0d 100%);
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Символ по центру монеты */
         .coin::after {
-            content: "🪙";
-            font-size: 90px;
+            content: "⭐"; /* Сюда можно вставить любой символ: \$, 🪙, ⚡ */
+            font-size: 85px;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
         }
 
-        /* Эффект сжатия при самом клике */
+        /* Физическое нажатие: смещение вниз, чтобы компенсировать 3D рант */
         .coin:active {
-            transform: scale(0.92);
+            transform: translateY(10px) scale(0.96);
+            box-shadow: 
+                0 5px 0 #935116,
+                0 10px 15px rgba(0, 0, 0, 0.8);
+        }
+
+        /* СТИЛЬ ДЛЯ ВЫЛЕТАЮЩЕГО ТЕКСТА "+1" */
+        .click-animation {
+            position: absolute;
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 10;
+            animation: floatUp 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Анимация плавного взлета и растворения */
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) translateY(-120px) scale(0.8);
+            }
         }
     </style>
 </head>
@@ -56,25 +107,64 @@
 
     <div id="coins-text">Монеты: 0</div>
     
-    <!-- Монетка с привязанной функцией клика -->
-    <div class="coin" onclick="clickCoin()"></div>
+    <div class="coin-container">
+        <div class="coin"></div>
+    </div>
 
     <script>
-        // 1. Загружаем монеты из памяти браузера при старте
+        // Загрузка баланса
         let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 0;
-        
-        // Отображаем сохраненные монеты на экране
         const scoreDisplay = document.getElementById('coins-text');
         scoreDisplay.innerText = `Монеты: ${coins}`;
 
-        // 2. Функция самого клика
-        function clickCoin() {
+        const coinElement = document.querySelector('.coin');
+        const container = document.querySelector('.coin-container');
+
+        // Логика начисления и создания всплывающего текста
+        function handleTargetClick(e) {
             coins++;
             scoreDisplay.innerText = `Монеты: ${coins}`;
-            
-            // Сохраняем новое значение в память
             localStorage.setItem('coins', coins);
+
+            // Получаем координаты клика относительно монетки
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            const rect = coinElement.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            // Создаем элемент анимации "+1"
+            const plusOne = document.createElement('div');
+            plusOne.classList.add('click-animation');
+            plusOne.innerText = '+1';
+            plusOne.style.left = `${x}px`;
+            plusOne.style.top = `${y}px`;
+
+            coinElement.appendChild(plusOne);
+
+            // Удаляем элемент после завершения анимации
+            setTimeout(() => {
+                plusOne.remove();
+            }, 600);
         }
+
+        // Поддержка ПК мышкой
+        coinElement.addEventListener('mousedown', (e) => {
+            handleTargetClick(e);
+        });
+
+        // Поддержка смартфонов тачем
+        coinElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleTargetClick(e);
+        }, { passive: false });
     </script>
 
 </body>
